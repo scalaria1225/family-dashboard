@@ -193,6 +193,82 @@ body[data-view="dad"] .sum-card[data-member="dad"]{
   background:linear-gradient(180deg,#FFFFFF,var(--soft,#FFF7E6));
 }
 
+/* ---------- 지금 우리 가족은? (상태판) ---------- */
+.status-card{background:linear-gradient(180deg,#FFFFFF 0%,#FFFAF2 58%,#FFF3E2 100%);}
+.status-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.st-tile{
+  display:flex;flex-direction:column;gap:5px;min-width:0;
+  padding:8px 7px 6px;border-radius:18px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#FFFFFF,#FFFCF6);
+  box-shadow:var(--shadow-soft);
+}
+.st-top{display:flex;align-items:center;gap:5px;min-width:0;}
+.st-avatar{
+  flex:0 0 auto;width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;line-height:1;background:var(--soft,#FFF7E6);
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:inset 0 -2px 4px rgba(180,140,90,.10);
+}
+.st-name{
+  min-width:0;font-size:12.5px;font-weight:800;color:#5C4A3B;letter-spacing:-.3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.st-when{margin-left:auto;flex:0 0 auto;font-size:9.5px;font-weight:800;color:#B5A492;letter-spacing:-.1px;}
+.st-now{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  width:100%;min-height:60px;padding:6px 4px 5px;
+  border-radius:15px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.85);
+  background:var(--soft,#FFF7E6);
+  box-shadow:inset 0 -2px 6px rgba(180,140,90,.08);
+  transition:transform .12s ease,box-shadow .15s ease;
+}
+.st-now:active{transform:scale(.96);}
+.st-now .st-icon{font-size:27px;line-height:1.08;}
+.st-now .st-label{
+  font-size:11px;font-weight:800;color:#4F3D2F;letter-spacing:-.3px;
+  text-align:center;line-height:1.25;
+}
+.st-now.idle{background:linear-gradient(180deg,#FFFDF8,#FBF4E9);}
+.st-now.idle .st-icon{font-size:23px;opacity:.62;}
+.st-now.idle .st-label{color:#9C8A78;font-weight:700;}
+.st-now.just{animation:popIn .4s ease-out;}
+.st-btns{display:flex;gap:5px;}
+.st-btn{
+  flex:1 1 0;min-width:0;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:5px 2px 4px;border-radius:13px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#FFFFFF,#FFF8ED);
+  box-shadow:0 1px 2px rgba(168,132,86,.06);
+  transition:transform .12s ease,background .15s ease,border-color .15s ease;
+}
+.st-btn .st-icon{font-size:18px;line-height:1.05;}
+.st-btn .st-label{font-size:10px;font-weight:800;color:#7A695A;letter-spacing:-.3px;white-space:nowrap;}
+.st-btn.on{
+  background:linear-gradient(180deg,#FFF4DC,#FFE8BC);border-color:#F3D49B;
+  box-shadow:0 3px 9px rgba(224,176,90,.28), inset 0 0 0 1px rgba(255,255,255,.7);
+}
+.st-btn.on .st-label{color:#8A5E1B;}
+.st-btn:active{transform:scale(.95);}
+.st-reset{
+  border:none;background:none;cursor:pointer;padding:1px 0 1px;
+  font-size:10px;font-weight:800;color:#B7A794;letter-spacing:-.2px;
+  transition:color .15s ease;
+}
+.st-reset.on{color:#C6B7A4;}
+.st-reset:active{color:#8A7663;}
+@media (min-width:760px){
+  .status-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+  .st-now .st-icon{font-size:30px;}
+  .st-now .st-label{font-size:12px;}
+  .st-btn .st-label{font-size:11px;}
+}
+
 /* ---------- 펫 ---------- */
 .pets{display:flex;gap:10px;}
 .pet-card{
@@ -733,6 +809,15 @@ body[data-view="dad"]    .member-scope:not([data-member="dad"]){display:none;}
 <main class="wrap">
   <section class="summary" id="summary" aria-label="가족 오늘 달성률"></section>
 
+  <section class="card block status-card" id="status-card" aria-label="지금 우리 가족은?">
+    <div class="card-head">
+      <h2><span aria-hidden="true">👀</span> 지금 우리 가족은?</h2>
+      <span class="pill" id="status-pill">모두 쉬는 중</span>
+    </div>
+    <div class="status-grid" id="status-grid"></div>
+    <p class="hint">내 칸의 아이콘을 누르면 가족 모두에게 바로 보여요. 같은 상태를 한 번 더 누르면 <b>🏠 집에서 쉬는 중</b>으로 돌아가요.</p>
+  </section>
+
   <section class="pets block kids-only" id="pets" aria-label="우리 아이 펫 키우기"></section>
 
   <section class="card block kids-only" aria-label="이번 주 도장판">
@@ -919,6 +1004,7 @@ body[data-view="dad"]    .member-scope:not([data-member="dad"]){display:none;}
       <p style="margin-bottom:9px;">매일 해야 할 일을 하나씩 해낼 때마다 <b>예현이는 강아지</b>, <b>예서는 토끼</b>가 쑥쑥 자라요.</p>
       <p style="margin-bottom:9px;">✅ 할 일을 체크하면 <b>경험치 + 간식</b>이 쌓이고,<br>🌈 오늘 할 일을 <b>모두</b> 끝내면 도장판에 <b>도장이 쾅!</b></p>
       <p style="margin-bottom:9px;">📝 할 일은 각자 칸에서 <b>추가·수정·삭제</b>할 수 있고, <b>매일</b> 표시를 누르면 매일 반복되는 루틴이 돼요.</p>
+      <p style="margin-bottom:9px;">👀 맨 위 <b>'지금 우리 가족은?'</b>에서 내 아이콘을 누르면 아빠·엄마·예현·예서가 지금 뭐 하는지 아이콘만 봐도 알 수 있어요.</p>
       <p>⏱️ 공부 타이머, 🎲 가족 미션, 💌 응원 보드도 함께 써 보세요!</p>
       <button class="btn btn-primary party-btn" data-act="close" data-close="1" style="width:100%;">우리 가족 시작하기</button>
     </div>
@@ -994,6 +1080,77 @@ var MEMBER_MAP = {};
 MEMBERS.forEach(function (m) { MEMBER_MAP[m.id] = m; });
 function memberById(id) { return MEMBER_MAP[id] || null; }
 function kids() { return MEMBERS.filter(function (m) { return !!m.pet; }); }
+
+/* ------------------------- 1-1. 현재 상태 아이콘 ------------------------- */
+/* 구성원마다 지정한 2가지 상태 + 기본(집에서 쉬는 중). 누르면 바로 바뀌어요. */
+var STATUS_HOME = { key: 'home', emoji: '🏠', label: '집에서 쉬는 중' };
+var STATUS_SETS = {
+  dad: [
+    { key: 'work',    emoji: '💼', label: '일하는 중' },
+    { key: 'commute', emoji: '🚇', label: '퇴근 중' }
+  ],
+  mom: [
+    { key: 'work', emoji: '💻', label: '일하는 중' },
+    { key: 'cook', emoji: '🍳', label: '식사준비' }
+  ],
+  yehyun: [
+    { key: 'study', emoji: '✏️', label: '공부하는 중' },
+    { key: 'sleep', emoji: '🌙', label: '잠자리' }
+  ],
+  yeseo: [
+    { key: 'study', emoji: '✏️', label: '공부하는 중' },
+    { key: 'sleep', emoji: '🌙', label: '잠자리' }
+  ]
+};
+
+function statusOptions(id) { return STATUS_SETS[id] || []; }
+
+function statusFind(id, key) {
+  if (!key || key === 'home') return STATUS_HOME;
+  var list = statusOptions(id);
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].key === key) return list[i];
+  }
+  return STATUS_HOME;
+}
+
+function statusOf(id) {
+  var all = (Store.state && Store.state.statuses) || {};
+  var rec = all[id];
+  if (!rec || typeof rec !== 'object') return { key: 'home', at: null };
+  var opt = statusFind(id, rec.key);
+  return { key: opt.key, at: (opt.key === 'home' ? null : (typeof rec.at === 'string' ? rec.at : null)) };
+}
+
+function statusAgo(at) {
+  if (!at) return '';
+  var t = Date.parse(at);
+  if (!isFinite(t)) return '';
+  var m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return '방금';
+  if (m < 60) return m + '분 전';
+  var h = Math.floor(m / 60);
+  if (h < 24) return h + '시간 전';
+  return Math.floor(h / 24) + '일 전';
+}
+
+/* 상태 바꾸기: 같은 상태를 다시 누르면 기본(집에서 쉬는 중)으로 */
+function setStatus(id, key) {
+  if (!memberById(id)) return;
+  var want = statusFind(id, key).key;
+  var cur = statusOf(id).key;
+  var next = (want !== 'home' && want === cur) ? 'home' : want;
+  ui.statusFx = { member: id, at: Date.now() };
+  Store.commit(function () {
+    Store.state.statuses = Store.state.statuses || {};
+    Store.state.statuses[id] = {
+      key: next,
+      at: (next === 'home' ? null : new Date().toISOString())
+    };
+  });
+  var m = memberById(id);
+  toast(m.name + ' · ' + statusFind(id, next).label);
+}
 
 var LEVELS = [
   { lv: 1, name: '아기',        min: 0,   desc: '이제 막 태어났어요' },
@@ -1104,6 +1261,7 @@ var STORAGE_KEY = 'family-dashboard:v1';
 
 function defaultState() {
   var members = {};
+  var statuses = {};
   MEMBERS.forEach(function (m) {
     members[m.id] = {
       xp: 0,
@@ -1112,11 +1270,13 @@ function defaultState() {
         return { id: uid(), text: t.text, emoji: t.emoji, routine: true, done: false };
       })
     };
+    statuses[m.id] = { key: 'home', at: null };
   });
   return {
     v: 1,
     today: dateKey(),
     members: members,
+    statuses: statuses,
     history: {},
     missions: { current: null, doneOn: null, count: 0 },
     cheers: [],
@@ -1186,6 +1346,18 @@ function normalize(raw) {
       hist[m.id] = out;
     });
     base.history = hist;
+  }
+
+  if (raw.statuses && typeof raw.statuses === 'object') {
+    MEMBERS.forEach(function (m) {
+      var s = raw.statuses[m.id];
+      if (!s || typeof s !== 'object') return;
+      var opt = statusFind(m.id, s.key);
+      base.statuses[m.id] = {
+        key: opt.key,
+        at: (opt.key === 'home' ? null : (typeof s.at === 'string' ? s.at : null))
+      };
+    });
   }
 
   if (raw.missions && typeof raw.missions === 'object') {
@@ -1717,6 +1889,7 @@ var ui = {
   monthCursor: null,
   sticker: '❤️',
   cheerFrom: 'yehyun',
+  statusFx: null,     /* { member, at } — 방금 바뀐 칸 반짝임 */
   confirmCb: null
 };
 
@@ -1900,6 +2073,51 @@ function renderSummary() {
       '</button>';
   });
   $('summary').innerHTML = html;
+}
+
+function renderStatusBoard() {
+  var host = $('status-grid');
+  if (!host) return;
+  var html = '';
+  var activeCount = 0;
+  var now = Date.now();
+  MEMBERS.forEach(function (m) {
+    var cur = statusOf(m.id);
+    var opt = statusFind(m.id, cur.key);
+    var home = (cur.key === 'home');
+    if (!home) activeCount++;
+    var when = home ? '' : statusAgo(cur.at);
+    var just = !home && ui.statusFx && ui.statusFx.member === m.id && (now - ui.statusFx.at) < 1200;
+
+    var btns = '';
+    statusOptions(m.id).forEach(function (o) {
+      var on = (!home && opt.key === o.key);
+      btns += '<button class="st-btn' + (on ? ' on' : '') + '" data-act="status-set" data-member="' + m.id +
+        '" data-status="' + o.key + '" aria-pressed="' + (on ? 'true' : 'false') +
+        '" aria-label="' + esc(m.name) + ' ' + esc(o.label) + (on ? ' (누르면 기본으로)' : '') + '">' +
+        '<span class="st-icon" aria-hidden="true">' + o.emoji + '</span>' +
+        '<span class="st-label">' + esc(o.label) + '</span></button>';
+    });
+
+    html += '<div class="st-tile" data-member="' + m.id + '" style="--soft:' + m.soft + ';--deep:' + m.deep + '">' +
+      '<div class="st-top">' +
+      '<span class="st-avatar" aria-hidden="true">' + m.emoji + '</span>' +
+      '<span class="st-name">' + esc(m.name) + '</span>' +
+      (when ? '<span class="st-when">' + esc(when) + '</span>' : '') +
+      '</div>' +
+      '<button class="st-now' + (home ? ' idle' : '') + (just ? ' just' : '') + '" data-act="status-now" data-member="' + m.id +
+      '" aria-label="' + esc(m.name) + ' 지금 ' + esc(opt.label) + ' — 누르면 상태가 바뀌어요">' +
+      '<span class="st-icon" aria-hidden="true">' + opt.emoji + '</span>' +
+      '<span class="st-label">' + esc(opt.label) + '</span>' +
+      '</button>' +
+      '<div class="st-btns">' + btns + '</div>' +
+      '<button class="st-reset' + (home ? ' on' : '') + '" data-act="status-set" data-member="' + m.id + '" data-status="home"' +
+      (home ? ' aria-current="true"' : '') + '>' + (home ? '기본 상태' : '🏠 쉬는 중으로') + '</button>' +
+      '</div>';
+  });
+  host.innerHTML = html;
+  var pill = $('status-pill');
+  if (pill) pill.textContent = activeCount ? (activeCount + '명 활동 중') : '모두 쉬는 중';
 }
 
 function renderPets() {
@@ -2186,6 +2404,7 @@ function renderAll() {
   if (!Store.state) return;
   renderTabs();
   renderSummary();
+  renderStatusBoard();
   renderPets();
   renderBoard();
   renderChecklists();
@@ -2442,6 +2661,13 @@ document.addEventListener('click', function (e) {
   var memberId = t.getAttribute('data-member');
   var taskId = t.getAttribute('data-task');
 
+  if (act === 'status-set') { setStatus(memberId, t.getAttribute('data-status')); return; }
+  if (act === 'status-now') {
+    var sCur = statusOf(memberId).key;
+    var sOpts = statusOptions(memberId);
+    setStatus(memberId, (sCur === 'home' && sOpts.length) ? sOpts[0].key : 'home');
+    return;
+  }
   if (act === 'filter') {
     ui.filter = t.getAttribute('data-view') || 'all';
     ui.editing = null;
@@ -2599,6 +2825,7 @@ document.addEventListener('keydown', function (e) {
 /* ------------------------- 17. 시작 ------------------------- */
 function clockTick() {
   renderDateline();
+  renderStatusBoard();
   if (rolloverIfNeeded()) {
     ensureMission();
     renderAll();
