@@ -14,7 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%8F%A1%3C/text%3E%3C/svg%3E">
 <style>
 /* =========================================================
-   우리 가족 학습관리 대시보드 — 엄마 위주
+   우리 가족 학습관리 대시보드 — 예현·예서 먼저
    스터디 바로가기 + 지금 우리 가족은? + 오늘의 할 일
    ========================================================= */
 :root{
@@ -628,7 +628,7 @@ a{color:inherit;}
     </div>
     <div class="modal-body" style="font-size:13px;line-height:1.7;font-weight:600;color:#5C4636;">
       <p style="margin-bottom:9px;">📚 위쪽 <b>예현 스터디</b>·<b>예서 스터디</b> 카드를 누르면 아이별 학습 화면으로 바로 들어가요.</p>
-      <p style="margin-bottom:9px;">👀 <b>지금 우리 가족은?</b>에서 내 아이콘을 누르면 아빠·엄마·예현·예서가 지금 뭐 하는지 한눈에 보여요.</p>
+      <p style="margin-bottom:9px;">👀 <b>지금 우리 가족은?</b>에서 내 아이콘을 누르면 예현·예서·엄마·아빠가 지금 뭐 하는지 한눈에 보여요.</p>
       <p style="margin-bottom:9px;">✅ <b>오늘의 할 일</b>은 추가·체크·수정·삭제할 수 있고, <b>매일</b>을 누르면 매일 반복되는 루틴이 돼요.</p>
       <p>설정(⚙️)에서 백업 파일로 내보내거나 새로 시작할 수 있어요.</p>
       <button class="btn btn-primary" data-act="close" data-close="1" style="width:100%;margin-top:14px;">시작하기</button>
@@ -639,7 +639,7 @@ a{color:inherit;}
 <script>
 'use strict';
 /* =========================================================================
-   우리 가족 학습관리 대시보드 v2.0 (엄마 위주)
+   우리 가족 학습관리 대시보드 v2.1 (아이들 먼저 보이는 순서)
    - 스터디 바로가기(예현 ./study/, 예서 ./yeseo/) + 가족 상태판 + 오늘의 할 일
    - 기존 v1 저장소(family-dashboard:v1)의 상태·할 일 데이터를 그대로 이어받습니다.
      (펫·경험치·도장·타이머·미션·응원 보드는 제거, members[].tasks / statuses 는 유지)
@@ -677,11 +677,12 @@ function fmtAmpm(iso) {
 }
 
 /* ------------------------- 1. 가족 ------------------------- */
-/* 엄마가 먼저 보이도록 순서를 엄마 → 예현 → 예서 → 아빠로 둡니다. */
+/* 아이들이 먼저 보이도록 순서를 예현 → 예서 → 엄마 → 아빠로 둡니다.
+   (넓은 화면에서는 두 칸씩: 첫 줄 예현·예서, 아랫줄 엄마·아빠) */
 var MEMBERS = [
-  { id: 'mom',    name: '엄마', sub: '',    emoji: '🐻', tint: '#DFF1E3', soft: '#EFF9F2', deep: '#5FAE80' },
   { id: 'yehyun', name: '예현', sub: '초4', emoji: '🐶', tint: '#FFE9BE', soft: '#FFF4DC', deep: '#DBA044' },
   { id: 'yeseo',  name: '예서', sub: '초1', emoji: '🐰', tint: '#FFDDE8', soft: '#FFEDF4', deep: '#E4789F' },
+  { id: 'mom',    name: '엄마', sub: '',    emoji: '🐻', tint: '#DFF1E3', soft: '#EFF9F2', deep: '#5FAE80' },
   { id: 'dad',    name: '아빠', sub: '',    emoji: '🐳', tint: '#E4EFFF', soft: '#F0F5FF', deep: '#6E97D9' }
 ];
 
