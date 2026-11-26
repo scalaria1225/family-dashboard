@@ -74,6 +74,16 @@ a{color:inherit;text-decoration:none;}
 .back:active{transform:scale(.96);}
 .brand{min-width:0;}
 .brand h1{font-size:17px;font-weight:800;letter-spacing:-.4px;color:var(--ink-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* 가족 실시간 동기화 상태 */
+.sync-badge{
+  display:inline-block;margin-top:2px;padding:1px 7px;border-radius:999px;
+  font-size:10.5px;font-weight:700;letter-spacing:-.2px;line-height:1.5;
+  color:#4E7F5F;background:#EAF6EE;border:1px solid #CFE9D8;
+  white-space:nowrap;cursor:default;
+}
+.sync-badge[data-state="connecting"]{color:#8A7440;background:#FDF6E3;border-color:#F2E4BE;}
+.sync-badge[data-state="offline"],
+.sync-badge[data-state="error"]{color:#94663F;background:#FBF1E2;border-color:#F0DCC0;}
 
 /* ---------- 본문 ---------- */
 .wrap{max-width:900px;margin:0 auto;padding:4px 14px calc(40px + env(safe-area-inset-bottom));}
@@ -339,7 +349,7 @@ a{color:inherit;text-decoration:none;}
 <header class="topbar">
   <div class="topbar-inner">
     <a class="back" href="../"><span aria-hidden="true">←</span> 메인 대시보드</a>
-    <div class="brand"><h1><span aria-hidden="true">🔤</span> 예서 스터디</h1></div>
+    <div class="brand"><h1><span aria-hidden="true">🔤</span> 예서 스터디</h1><span class="sync-badge" id="sync-badge" data-state="connecting" title="가족 클라우드에 연결하는 중">🟡 연결 중…</span></div>
   </div>
 </header>
 
@@ -411,6 +421,7 @@ a{color:inherit;text-decoration:none;}
 
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
+<script src="../cloud-sync.js"></script>
 <script>
 'use strict';
 /* =========================================================================
@@ -501,11 +512,14 @@ var DB_KEY = 'yeseo-study:v1';
 
 var db = { v: 1, words: [], sets: {}, tab: 'words', pattern: 'sh' };
 var storageOk = true;
+var hadLocalDB = false;      /* 이 기기에 저장된 단어장이 있었는지 (클라우드 초기값 보호용) */
+var applyingRemote = false;
 
 function loadDB(){
   var raw = null;
   try { raw = window.localStorage.getItem(DB_KEY); }
   catch(e){ storageOk = false; }
+  hadLocalDB = !!raw;
   if(!raw) return;
   var parsed = null;
   try { parsed = JSON.parse(raw); } catch(e2){ parsed = null; }
@@ -548,15 +562,40 @@ function loadDB(){
 
   if(parsed.tab === 'phonics' || parsed.tab === 'words') db.tab = parsed.tab;
   if(typeof parsed.pattern === 'string') db.pattern = parsed.pattern.toLowerCase().trim().slice(0,6) || 'sh';
+  if(typeof parsed._rev === 'string') db._rev = parsed._rev;
+  db._up = Number(parsed._up) || 0;
 }
 
 function saveDB(){
+  if(!applyingRemote){
+    db._rev = uid();
+    db._up = Date.now();
+  }
   try{
     window.localStorage.setItem(DB_KEY, JSON.stringify(db));
     storageOk = true;
   }catch(e){
     storageOk = false;
   }
+  if(!applyingRemote && window.yeseoSync){
+    window.yeseoSync.onLocalChange();
+  }
+}
+
+/* 다른 기기(클라우드)의 단어장을 받아 화면에 반영 */
+function applyRemoteDB(data){
+  if(!data || typeof data !== 'object') return;
+  applyingRemote = true;
+  try{
+    window.localStorage.setItem(DB_KEY, JSON.stringify(data));
+    db = { v: 1, words: [], sets: {}, tab: 'words', pattern: 'sh' };
+    loadDB();
+    if(typeof data._rev === 'string') db._rev = data._rev;
+    if(data._up) db._up = Number(data._up) || 0;
+    window.localStorage.setItem(DB_KEY, JSON.stringify(db));
+  }catch(e){}
+  applyingRemote = false;
+  renderAll();
 }
 
 /* ------------------------- 3. 소리 (듣기) -------------------------
@@ -1451,6 +1490,36 @@ document.addEventListener('keydown', function(e){
   }
 });
 
+/* ------------------------- 8-1. 가족 실시간 동기화 ------------------------- */
+var yeseoSync = null;
+
+function updateSyncBadge(s){
+  var el = $('sync-badge');
+  if(!el) return;
+  var st = (s && s.status) || 'connecting';
+  var label, tip;
+  if(st === 'live'){ label = '🟢 실시간 동기화'; tip = '가족 폰과 실시간으로 맞춰지는 중이에요'; }
+  else if(st === 'offline'){ label = '⚪ 오프라인 · 이 기기에 저장'; tip = '인터넷이 없어도 이 기기에는 저장돼요'; }
+  else if(st === 'error'){ label = '🟠 동기화 지연 · 이 기기에 저장'; tip = '잠시 뒤 다시 연결하며 저장된 내용은 그대로예요'; }
+  else { label = '🟡 연결 중…'; tip = '가족 클라우드에 연결하는 중이에요'; }
+  if(el.textContent !== label) el.textContent = label;
+  el.setAttribute('data-state', st);
+  el.title = tip;
+}
+
+function startYeseoSync(){
+  if(typeof CloudSync === 'undefined'){ updateSyncBadge({ status: 'offline' }); return; }
+  yeseoSync = CloudSync.create({
+    row: 'sync-test-yeseo',
+    hadLocal: hadLocalDB,
+    getState: function(){ return db; },
+    applyState: function(data){ applyRemoteDB(data); },
+    onStatus: updateSyncBadge
+  });
+  window.yeseoSync = yeseoSync;
+  yeseoSync.init();
+}
+
 /* ------------------------- 9. 시작 ------------------------- */
 loadDB();
 if(!db.pattern) db.pattern = 'sh';
@@ -1464,6 +1533,7 @@ if(!storageOk){
     no.innerHTML = '저장이 막혀 있어 새로 고치면 단어장이 사라져요. 브라우저 설정에서 저장을 허용해 주세요.';
   }
 }
+startYeseoSync();
 </script>
 </body>
 </html>

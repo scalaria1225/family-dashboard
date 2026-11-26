@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#FFF9EF">
 <meta name="description" content="엄마가 관리하는 우리 가족 학습·할 일 대시보드. 예현·예서 스터디 바로가기와 지금 우리 가족은?, 오늘의 할 일.">
 <meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="referrer" content="no-referrer">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
@@ -92,7 +93,18 @@ a{color:inherit;}
 .brand h1 span{margin-right:4px;}
 .dateline{
   margin-top:2px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:-.1px;
+  display:flex;align-items:center;flex-wrap:wrap;gap:5px;
 }
+/* 가족 실시간 동기화 상태 */
+.sync-badge{
+  display:inline-block;padding:1px 7px;border-radius:999px;
+  font-size:10.5px;font-weight:700;letter-spacing:-.2px;line-height:1.5;
+  color:#4E7F5F;background:#EAF6EE;border:1px solid #CFE9D8;
+  white-space:nowrap;cursor:default;
+}
+.sync-badge[data-state="connecting"]{color:#8A7440;background:#FDF6E3;border-color:#F2E4BE;}
+.sync-badge[data-state="offline"],
+.sync-badge[data-state="error"]{color:#94663F;background:#FBF1E2;border-color:#F0DCC0;}
 .topbar-actions{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
 .icon-btn{
   flex:0 0 auto;
@@ -501,7 +513,7 @@ a{color:inherit;}
   <div class="topbar-inner">
     <div class="brand">
       <h1><span aria-hidden="true">🏡</span> 우리 가족 학습관리</h1>
-      <p class="dateline" id="dateline">오늘</p>
+      <p class="dateline"><span id="dateline">오늘</span><span class="sync-badge" id="sync-badge" data-state="connecting" title="가족 클라우드에 연결하는 중">🟡 연결 중…</span></p>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-settings" data-act="settings" aria-label="설정 열기">⚙️</button>
@@ -553,7 +565,7 @@ a{color:inherit;}
   </section>
 
   <p class="foot">
-    <b>우리 가족 학습관리</b> · 데이터는 이 기기의 브라우저에 자동 저장돼요.<br>
+    <b>우리 가족 학습관리</b> · 가족 폰과 실시간으로 함께 저장돼요.<br>
     설정(⚙️)에서 백업 파일로 내보내거나 새로 시작할 수 있어요.
   </p>
 </main>
@@ -594,7 +606,7 @@ a{color:inherit;}
         📱 <b>폰 홈 화면에 추가</b>하면 앱처럼 바로 열려요. 아이폰은 Safari 공유 → '홈 화면에 추가', 갤럭시는 Chrome 오른쪽 위 ⋮ → '홈 화면에 추가'.
       </div>
       <div class="note-box">
-        지금은 이 기기의 브라우저 저장소(localStorage)에만 저장돼요. 가족이 서로 다른 폰에서 <b>같은 내용을 실시간으로</b> 보려면 다음 단계로 클라우드 DB를 연결하면 됩니다.
+        가족 폰과 <b>실시간으로 같은 내용</b>을 봐요. 저장은 이 기기(브라우저)에도 되고, 가족 클라우드(Supabase)에도 함께 되어 다른 폰에서 바꾼 내용이 새로고침 없이 나타납니다. 인터넷이 끊겨도 이 기기에는 그대로 저장돼요.
       </div>
     </div>
   </div>
@@ -636,6 +648,7 @@ a{color:inherit;}
   </div>
 </div>
 
+<script src="./cloud-sync.js"></script>
 <script>
 'use strict';
 /* =========================================================================
@@ -890,6 +903,9 @@ function normalize(raw) {
   base.today = typeof raw.today === 'string' ? raw.today : dateKey();
   base.seenIntro = !!raw.seenIntro;
   base.createdAt = numOr(raw.createdAt, Date.now());
+  /* 가족 동기화용 꼬리표(마지막 변경 식별자·시각)는 그대로 이어받습니다 */
+  if (typeof raw._rev === 'string' && raw._rev) base._rev = raw._rev;
+  base._up = numOr(raw._up, 0);
   return base;
 }
 
@@ -897,6 +913,8 @@ var Store = {
   state: null,
   savedAt: null,
   storageOk: true,
+  hadSaved: false,     /* 이 기기에 이전에 저장된 기록이 있었는지 (클라우드 초기값 보호용) */
+  applyingRemote: false,
 
   load: function () {
     var rawText = null;
@@ -906,6 +924,7 @@ var Store = {
     } catch (e) {
       this.storageOk = false;
     }
+    this.hadSaved = !!rawText;
     var parsed = null;
     if (rawText) {
       try { parsed = JSON.parse(rawText); } catch (e2) { parsed = null; }
@@ -923,6 +942,10 @@ var Store = {
       this.storageOk = false;
     }
     updateSavedNote();
+    /* 가족 클라우드로도 보내기 (원격 상태를 받아 쓰는 중에는 보내지 않음) */
+    if (!this.applyingRemote && typeof CloudSync !== 'undefined' && window.familySync) {
+      window.familySync.onLocalChange();
+    }
     return this.storageOk;
   },
 
@@ -931,17 +954,51 @@ var Store = {
     if (!this.state) this.state = defaultState();
     rolloverIfNeeded();
     if (typeof mutator === 'function') mutator(this.state);
+    this.state._rev = uid();
+    this.state._up = Date.now();
     this.save();
     renderAll();
   },
 
-  /* 다른 기기/클라우드의 상태를 받아들이는 지점 (실시간 동기화 확장용) */
+  /* 다른 기기/클라우드의 상태를 받아들이는 지점 */
   applyRemote: function (next) {
+    this.applyingRemote = true;
     this.state = normalize(next);
     this.save();
+    this.applyingRemote = false;
     renderAll();
   }
 };
+
+/* ------------------------- 4-1. 가족 실시간 동기화 ------------------------- */
+var familySync = null;
+
+function updateSyncBadge(s) {
+  var el = $('sync-badge');
+  if (!el) return;
+  var st = (s && s.status) || 'connecting';
+  var label, tip;
+  if (st === 'live') { label = '🟢 실시간 동기화'; tip = '가족 폰과 실시간으로 맞춰지는 중이에요'; }
+  else if (st === 'offline') { label = '⚪ 오프라인 · 이 기기에 저장'; tip = '인터넷이 없어도 이 기기에는 저장돼요'; }
+  else if (st === 'error') { label = '🟠 동기화 지연 · 이 기기에 저장'; tip = '잠시 뒤 다시 연결하며 저장된 내용은 그대로예요'; }
+  else { label = '🟡 연결 중…'; tip = '가족 클라우드에 연결하는 중이에요'; }
+  if (el.textContent !== label) el.textContent = label;
+  el.setAttribute('data-state', st);
+  el.title = tip;
+}
+
+function startFamilySync() {
+  if (typeof CloudSync === 'undefined') { updateSyncBadge({ status: 'offline' }); return; }
+  familySync = CloudSync.create({
+    row: 'sync-test-main',
+    hadLocal: Store.hadSaved,
+    getState: function () { return Store.state; },
+    applyState: function (data) { Store.applyRemote(data); },
+    onStatus: updateSyncBadge
+  });
+  window.familySync = familySync;
+  familySync.init();
+}
 
 /* ------------------------- 5. 계산 로직 ------------------------- */
 function tasksOf(id) {
@@ -1474,6 +1531,7 @@ function init() {
     openModal('modal-intro');
   }
 
+  startFamilySync();
   setInterval(clockTick, 30000);
 }
 
