@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF9EF">
-<meta name="description" content="엄마가 관리하는 우리 가족 학습·할 일 대시보드. 예현·예서 스터디 바로가기와 지금 우리 가족은?, 오늘의 할 일.">
+<meta name="description" content="엄마가 관리하는 우리 가족 학습·할 일 대시보드. 예현·예서 스터디 바로가기와 지금 우리 가족은?, 이번주 중요한 일, 오늘의 할 일.">
 <meta name="robots" content="noindex, nofollow, noarchive" />
 <meta name="referrer" content="no-referrer">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,7 @@
 <style>
 /* =========================================================
    우리 가족 학습관리 대시보드 — 예현·예서 먼저
-   스터디 바로가기 + 지금 우리 가족은? + 오늘의 할 일
+   스터디 바로가기 + 지금 우리 가족은? + 이번주 중요한 일 + 오늘의 할 일
    ========================================================= */
 :root{
   --bg:#FFF9EF;
@@ -415,6 +415,60 @@ a{color:inherit;}
   animation:popIn .35s ease-out;letter-spacing:-.2px;
 }
 
+/* ---------- 이번주 중요한 일 ---------- */
+.week-card{background:linear-gradient(180deg,#FFFFFF 0%,#FFFDF7 55%,#FFF6EA 100%);}
+.week-grid{display:grid;grid-template-columns:1fr;gap:11px;}
+@media (min-width:760px){ .week-grid{grid-template-columns:1fr 1fr;gap:13px;} }
+.week-col{
+  display:flex;flex-direction:column;min-width:0;
+  padding:10px 10px 9px;border-radius:18px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#FFFFFF,#FFFBF0);
+  box-shadow:var(--shadow-soft);
+}
+.week-col.yeseo{background:linear-gradient(180deg,#FFFFFF,#FFF8FB);}
+.week-head{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.week-avatar{
+  flex:0 0 auto;width:28px;height:28px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  background:var(--tint,#FFF3DA);border:1px solid rgba(255,255,255,.9);
+  box-shadow:inset 0 -2px 4px rgba(180,140,90,.10);
+}
+.week-name{font-size:13px;font-weight:800;color:#4E3C2D;letter-spacing:-.3px;white-space:nowrap;}
+.week-name i{font-style:normal;font-size:10.5px;font-weight:700;color:var(--muted);margin-left:3px;}
+.week-count{margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:800;color:#B3A18C;letter-spacing:-.1px;}
+.week-list{display:grid;gap:6px;}
+.week-row{
+  display:flex;align-items:center;gap:6px;padding:7px 6px 7px 7px;
+  background:#FFFDF9;border:1px solid var(--line-soft);border-radius:13px;
+}
+.week-row.done{background:var(--mint-soft);border-color:#D8EEE0;}
+.week-row.editing{background:#FFFCF4;border-color:#F3E2C8;}
+.week-row .check{width:25px;height:25px;flex:0 0 25px;border-radius:9px;font-size:13px;}
+.week-text{flex:1 1 auto;min-width:0;font-size:13px;font-weight:700;color:#4E3C2D;letter-spacing:-.2px;overflow-wrap:anywhere;line-height:1.4;}
+.week-row.done .week-text{color:#8FA695;text-decoration:line-through;text-decoration-thickness:1.5px;}
+.week-row .mini-btn{width:24px;height:24px;border-radius:8px;font-size:11px;}
+.week-empty{
+  font-size:11.5px;color:var(--muted);text-align:center;font-weight:700;
+  padding:9px 6px;background:#FFFCF6;border:1.5px dashed #F0E4D2;border-radius:12px;
+}
+.week-add{
+  width:100%;margin-top:8px;padding:8px;border-radius:12px;cursor:pointer;
+  border:1.5px dashed #EBD9BF;background:rgba(255,255,255,.6);
+  font-size:12px;font-weight:800;color:#A2865F;letter-spacing:-.2px;
+}
+.week-add:active{transform:scale(.99);}
+.week-col.yeseo .week-add{color:#B47A94;border-color:#F2D7E2;}
+.week-add-row{
+  display:flex;align-items:center;gap:5px;margin-top:8px;padding:6px;border-radius:13px;
+  background:#FFFCF4;border:1.5px solid #F3E2C8;
+}
+.week-input{
+  flex:1;min-width:0;padding:7px 9px;border-radius:10px;
+  border:1px solid #EFE0CB;background:#fff;font-size:12.5px;font-weight:700;color:var(--ink);outline:none;
+}
+.week-input:focus{border-color:#F0C88A;box-shadow:0 0 0 3px rgba(240,200,138,.22);}
+
 /* ---------- 애니메이션 ---------- */
 @keyframes popIn{
   0%{transform:scale(.7);opacity:0;}
@@ -555,6 +609,15 @@ a{color:inherit;}
     <p class="hint">내 칸의 아이콘을 누르면 가족에게 바로 보여요. 같은 상태를 한 번 더 누르면 <b>🏠 집에서 쉬는 중</b>으로 돌아가요.</p>
   </section>
 
+  <section class="card block week-card" aria-label="이번주 중요한 일">
+    <div class="card-head">
+      <h2><span aria-hidden="true">📅</span> 이번주 중요한 일</h2>
+      <span class="pill" id="week-pill">예현 0 · 예서 0</span>
+    </div>
+    <div class="week-grid" id="week-grid"></div>
+    <p class="hint">시험·행사·준비물처럼 <b>이번 주에 꼭 챙겨야 할 일</b>을 아이별로 적어 두세요. 끝난 일은 ✓로 체크, 고칠 때는 ✏️, 지울 때는 ✕.</p>
+  </section>
+
   <section class="block" aria-label="오늘의 할 일">
     <div class="board-head">
       <h2><span aria-hidden="true">✅</span> 오늘의 할 일</h2>
@@ -641,6 +704,7 @@ a{color:inherit;}
     <div class="modal-body" style="font-size:13px;line-height:1.7;font-weight:600;color:#5C4636;">
       <p style="margin-bottom:9px;">📚 위쪽 <b>예현 스터디</b>·<b>예서 스터디</b> 카드를 누르면 아이별 학습 화면으로 바로 들어가요.</p>
       <p style="margin-bottom:9px;">👀 <b>지금 우리 가족은?</b>에서 내 아이콘을 누르면 예현·예서·엄마·아빠가 지금 뭐 하는지 한눈에 보여요.</p>
+      <p style="margin-bottom:9px;">📅 <b>이번주 중요한 일</b>에는 시험·행사·준비물처럼 이번 주에 꼭 챙길 일을 예현·예서 칸에 적어 두고, ✏️로 고치고 ✓로 체크해요.</p>
       <p style="margin-bottom:9px;">✅ <b>오늘의 할 일</b>은 추가·체크·수정·삭제할 수 있고, <b>매일</b>을 누르면 매일 반복되는 루틴이 돼요.</p>
       <p>설정(⚙️)에서 백업 파일로 내보내거나 새로 시작할 수 있어요.</p>
       <button class="btn btn-primary" data-act="close" data-close="1" style="width:100%;margin-top:14px;">시작하기</button>
@@ -843,6 +907,8 @@ function defaultState() {
     today: dateKey(),
     members: members,
     statuses: statuses,
+    /* 이번주 중요한 일 — 아이 둘 칸. 예현(노랑) · 예서(분홍) */
+    weeklyImportant: { yehyun: [], yeseo: [] },
     settings: {},
     seenIntro: false,
     createdAt: Date.now()
@@ -852,6 +918,39 @@ function defaultState() {
 function numOr(v, fallback) {
   var n = Number(v);
   return isFinite(n) ? n : fallback;
+}
+
+/* 이번주 중요한 일 목록 정리
+   - 기존 DB/백업에 weeklyImportant 가 없어도 빈 배열로 안전하게 시작합니다.
+   - 문자열("수학 시험")과 { id, text, done } 객체 둘 다 받아 줍니다. */
+var WEEK_MEMBERS = ['yehyun', 'yeseo'];
+var WEEK_TEXT_MAX = 60;
+
+function emptyWeekly() { return { yehyun: [], yeseo: [] }; }
+
+function sanitizeWeekly(raw) {
+  var out = emptyWeekly();
+  if (!raw || typeof raw !== 'object') return out;
+  WEEK_MEMBERS.forEach(function (key) {
+    var src = raw[key];
+    if (Object.prototype.toString.call(src) !== '[object Array]') return;
+    src.forEach(function (it) {
+      var text = '';
+      var id = '';
+      var done = false;
+      if (typeof it === 'string') {
+        text = it;
+      } else if (it && typeof it === 'object') {
+        if (typeof it.text === 'string') text = it.text;
+        if (typeof it.id === 'string' && it.id) id = it.id;
+        done = !!it.done;
+      }
+      text = String(text).replace(/\s+/g, ' ').trim().slice(0, WEEK_TEXT_MAX);
+      if (!text) return;
+      out[key].push({ id: id || uid(), text: text, done: done });
+    });
+  });
+  return out;
 }
 
 /* 저장된 데이터를 현재 구조에 맞게 정리 (v1 펫 데이터는 버리고 할 일·상태는 살립니다) */
@@ -899,6 +998,9 @@ function normalize(raw) {
   if (raw.settings && typeof raw.settings === 'object') {
     base.settings = raw.settings;
   }
+
+  /* 이번주 중요한 일 (없으면 빈 칸 두 개로 시작) */
+  base.weeklyImportant = sanitizeWeekly(raw.weeklyImportant);
 
   base.today = typeof raw.today === 'string' ? raw.today : dateKey();
   base.seenIntro = !!raw.seenIntro;
@@ -1103,12 +1205,73 @@ function toggleTask(id, taskId) {
   }
 }
 
+/* ------------------------- 6-1. 이번주 중요한 일 조작 ------------------------- */
+function weekList(id) {
+  var w = Store.state && Store.state.weeklyImportant;
+  if (!w || Object.prototype.toString.call(w[id]) !== '[object Array]') return [];
+  return w[id];
+}
+function findWeekItem(id, itemId) {
+  var list = weekList(id);
+  for (var i = 0; i < list.length; i++) if (list[i].id === itemId) return list[i];
+  return null;
+}
+
+function addWeekItem(id, text) {
+  if (WEEK_MEMBERS.indexOf(id) < 0) return false;
+  var clean = String(text || '').replace(/\s+/g, ' ').trim().slice(0, WEEK_TEXT_MAX);
+  if (!clean) { toast('중요한 일을 적어 주세요'); return false; }
+  Store.commit(function () {
+    if (!Store.state.weeklyImportant) Store.state.weeklyImportant = emptyWeekly();
+    Store.state.weeklyImportant[id].push({ id: uid(), text: clean, done: false });
+  });
+  return true;
+}
+
+function saveWeekItemText(id, itemId, text) {
+  var clean = String(text || '').replace(/\s+/g, ' ').trim().slice(0, WEEK_TEXT_MAX);
+  if (!clean) { toast('내용을 적어 주세요'); return false; }
+  Store.commit(function () {
+    var it = findWeekItem(id, itemId);
+    if (it) it.text = clean;
+  });
+  return true;
+}
+
+function deleteWeekItem(id, itemId) {
+  if (WEEK_MEMBERS.indexOf(id) < 0) return;
+  var removed = null;
+  Store.commit(function () {
+    if (!Store.state.weeklyImportant) Store.state.weeklyImportant = emptyWeekly();
+    Store.state.weeklyImportant[id] = Store.state.weeklyImportant[id].filter(function (it) {
+      if (it.id === itemId) { removed = it; return false; }
+      return true;
+    });
+  });
+  if (removed) toast('"' + removed.text + '" 삭제했어요');
+}
+
+function toggleWeekItem(id, itemId) {
+  var it = findWeekItem(id, itemId);
+  if (!it) return;
+  var willCheck = !it.done;
+  Store.commit(function () {
+    var t = findWeekItem(id, itemId);
+    if (t) t.done = willCheck;
+  });
+  if (willCheck) toast(memberById(id) ? memberById(id).name + ' · 중요한 일 하나 끝! 👏' : '중요한 일 하나 끝! 👏');
+}
+
 /* ------------------------- 10. 화면 상태 ------------------------- */
 var ui = {
   editing: null,      /* { member, task } */
   editDraft: null,
   adding: null,       /* memberId */
   draft: '',
+  weekAdding: null,   /* 이번주 중요한 일: 추가 중인 아이 id */
+  weekDraft: '',
+  weekEditing: null,  /* { member, item } */
+  weekEditDraft: null,
   statusFx: null,     /* { member, at } — 방금 바뀐 칸 반짝임 */
   confirmCb: null
 };
@@ -1170,6 +1333,76 @@ function renderStatusBoard() {
   host.innerHTML = html;
   var pill = $('status-pill');
   if (pill) pill.textContent = activeCount ? (activeCount + '명 활동 중') : '모두 쉬는 중';
+}
+
+function renderWeeklyImportant() {
+  var host = $('week-grid');
+  if (!host) return;
+  var html = '';
+  var total = 0;
+  var totalDone = 0;
+  WEEK_MEMBERS.forEach(function (key) {
+    var m = memberById(key);
+    if (!m) return;
+    var list = weekList(key);
+    var doneCount = 0;
+    var rows = '';
+
+    if (!list.length) {
+      rows = '<p class="week-empty">이번 주에 챙길 일을 적어 보세요</p>';
+    }
+
+    list.forEach(function (it) {
+      if (it.done) doneCount++;
+      var editing = ui.weekEditing && ui.weekEditing.member === key && ui.weekEditing.item === it.id;
+      if (editing) {
+        rows += '<div class="week-row editing">' +
+          '<input class="week-input" id="week-edit-input" maxlength="' + WEEK_TEXT_MAX + '" value="' +
+          esc(ui.weekEditDraft === null ? it.text : ui.weekEditDraft) + '" aria-label="중요한 일 수정">' +
+          '<button class="mini-btn ok" data-act="week-edit-save" data-member="' + key + '" data-item="' + it.id + '">저장</button>' +
+          '<button class="mini-btn" data-act="week-edit-cancel" aria-label="수정 취소">취소</button>' +
+          '</div>';
+      } else {
+        rows += '<div class="week-row' + (it.done ? ' done' : '') + '">' +
+          '<button class="check' + (it.done ? ' on' : '') + '" data-act="week-toggle" data-member="' + key + '" data-item="' + it.id +
+          '" aria-pressed="' + (it.done ? 'true' : 'false') + '" aria-label="' + esc(it.text) + ' 완료 표시"><span aria-hidden="true">✓</span></button>' +
+          '<span class="week-text">' + esc(it.text) + '</span>' +
+          '<button class="mini-btn edit" data-act="week-edit" data-member="' + key + '" data-item="' + it.id + '" aria-label="수정">✏️</button>' +
+          '<button class="mini-btn del" data-act="week-del" data-member="' + key + '" data-item="' + it.id + '" aria-label="삭제">✕</button>' +
+          '</div>';
+      }
+    });
+
+    if (ui.weekAdding === key) {
+      rows += '<div class="week-add-row">' +
+        '<input class="week-input" id="week-add-input" maxlength="' + WEEK_TEXT_MAX + '" placeholder="예) 수학 단원평가" value="' +
+        esc(ui.weekDraft) + '" aria-label="새 중요한 일">' +
+        '<button class="mini-btn ok" data-act="week-add-save" data-member="' + key + '">추가</button>' +
+        '<button class="mini-btn" data-act="week-add-cancel" aria-label="추가 취소">취소</button>' +
+        '</div>';
+    }
+
+    total += list.length;
+    totalDone += doneCount;
+
+    html += '<div class="week-col' + (key === 'yeseo' ? ' yeseo' : '') + '" data-member="' + key +
+      '" style="--tint:' + m.soft + ';--soft:' + m.soft + ';--deep:' + m.deep + '">' +
+      '<div class="week-head">' +
+      '<span class="week-avatar" aria-hidden="true">' + m.emoji + '</span>' +
+      '<span class="week-name">' + esc(m.name) + (m.sub ? ' <i>' + m.sub + '</i>' : '') + '</span>' +
+      '<span class="week-count">' + (list.length ? doneCount + '/' + list.length + ' 완료' : '아직 없음') + '</span>' +
+      '</div>' +
+      '<div class="week-list">' + rows + '</div>' +
+      (ui.weekAdding === key ? '' : '<button class="week-add" data-act="week-add" data-member="' + key + '">+ ' + esc(m.name) + ' 중요한 일 추가</button>') +
+      '</div>';
+  });
+  host.innerHTML = html;
+
+  var pill = $('week-pill');
+  if (pill) {
+    var left = total - totalDone;
+    pill.textContent = !total ? '이번 주' : (left ? '남은 일 ' + left + '개' : '모두 끝! 👏');
+  }
 }
 
 function renderChecklists() {
@@ -1259,6 +1492,7 @@ function updateSavedNote() {
 function renderAll() {
   if (!Store.state) return;
   renderStatusBoard();
+  renderWeeklyImportant();
   renderChecklists();
   updateSavedNote();
 }
@@ -1389,6 +1623,7 @@ document.addEventListener('click', function (e) {
   var act = t.getAttribute('data-act');
   var memberId = t.getAttribute('data-member');
   var taskId = t.getAttribute('data-task');
+  var itemId = t.getAttribute('data-item');
 
   if (act === 'status-set') { setStatus(memberId, t.getAttribute('data-status')); return; }
   if (act === 'status-now') {
@@ -1441,6 +1676,52 @@ document.addEventListener('click', function (e) {
     return;
   }
   if (act === 'add-cancel') { ui.adding = null; ui.draft = ''; renderAll(); return; }
+
+  /* ------- 이번주 중요한 일 ------- */
+  if (act === 'week-add') {
+    ui.weekAdding = memberId;
+    ui.weekDraft = '';
+    ui.weekEditing = null;
+    ui.weekEditDraft = null;
+    renderWeeklyImportant();
+    focusInput('week-add-input');
+    return;
+  }
+  if (act === 'week-add-save') {
+    var wIn = $('week-add-input');
+    if (addWeekItem(memberId, wIn ? wIn.value : '')) {
+      ui.weekAdding = null;
+      ui.weekDraft = '';
+      renderAll();
+    }
+    return;
+  }
+  if (act === 'week-add-cancel') { ui.weekAdding = null; ui.weekDraft = ''; renderAll(); return; }
+  if (act === 'week-edit') {
+    ui.weekEditing = { member: memberId, item: itemId };
+    ui.weekEditDraft = null;
+    ui.weekAdding = null;
+    ui.weekDraft = '';
+    renderWeeklyImportant();
+    focusInput('week-edit-input');
+    return;
+  }
+  if (act === 'week-edit-save') {
+    var wE = $('week-edit-input');
+    if (saveWeekItemText(memberId, itemId, wE ? wE.value : '')) {
+      ui.weekEditing = null;
+      ui.weekEditDraft = null;
+      renderAll();
+    }
+    return;
+  }
+  if (act === 'week-edit-cancel') { ui.weekEditing = null; ui.weekEditDraft = null; renderAll(); return; }
+  if (act === 'week-del') {
+    if (ui.weekEditing && ui.weekEditing.item === itemId) { ui.weekEditing = null; ui.weekEditDraft = null; }
+    deleteWeekItem(memberId, itemId);
+    return;
+  }
+  if (act === 'week-toggle') { toggleWeekItem(memberId, itemId); return; }
   if (act === 'settings') { openSettings(); return; }
   if (act === 'close') { closeAllModals(); return; }
   if (act === 'export') { exportData(); return; }
@@ -1469,6 +1750,8 @@ document.addEventListener('input', function (e) {
   if (!el || !el.id) return;
   if (el.id === 'add-input') ui.draft = el.value;
   else if (el.id === 'edit-input') ui.editDraft = el.value;
+  else if (el.id === 'week-add-input') ui.weekDraft = el.value;
+  else if (el.id === 'week-edit-input') ui.weekEditDraft = el.value;
 });
 
 document.addEventListener('change', function (e) {
@@ -1483,6 +1766,8 @@ document.addEventListener('change', function (e) {
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
+    if (ui.weekEditing) { ui.weekEditing = null; ui.weekEditDraft = null; renderAll(); return; }
+    if (ui.weekAdding) { ui.weekAdding = null; ui.weekDraft = ''; renderAll(); return; }
     if (ui.editing) { ui.editing = null; ui.editDraft = null; renderAll(); return; }
     if (ui.adding) { ui.adding = null; ui.draft = ''; renderAll(); return; }
     closeAllModals();
@@ -1504,6 +1789,20 @@ document.addEventListener('keydown', function (e) {
     if (saveTaskText(ui.editing.member, ui.editing.task, el.value)) {
       ui.editing = null;
       ui.editDraft = null;
+      renderAll();
+    }
+  } else if (el.id === 'week-add-input' && ui.weekAdding) {
+    e.preventDefault();
+    if (addWeekItem(ui.weekAdding, el.value)) {
+      ui.weekAdding = null;
+      ui.weekDraft = '';
+      renderAll();
+    }
+  } else if (el.id === 'week-edit-input' && ui.weekEditing) {
+    e.preventDefault();
+    if (saveWeekItemText(ui.weekEditing.member, ui.weekEditing.item, el.value)) {
+      ui.weekEditing = null;
+      ui.weekEditDraft = null;
       renderAll();
     }
   }
