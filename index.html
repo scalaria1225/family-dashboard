@@ -591,7 +591,7 @@ a{color:inherit;}
   <section class="study-sec" aria-label="스터디 바로가기">
     <h2><span aria-hidden="true">📌</span> 스터디 바로가기</h2>
     <div class="study-grid">
-      <a class="study-card yehyun" href="./study/" aria-label="예현 스터디 열기">
+      <a class="study-card yehyun" href="./study/?v=20261126" aria-label="예현 스터디 열기">
         <span class="study-ico" aria-hidden="true">📚</span>
         <span class="study-body">
           <span class="study-kicker">초4 · 예현</span>
@@ -600,7 +600,7 @@ a{color:inherit;}
         </span>
         <span class="study-go" aria-hidden="true">들어가기 →</span>
       </a>
-      <a class="study-card yeseo" href="./yeseo/" aria-label="예서 스터디 열기">
+      <a class="study-card yeseo" href="./yeseo/?v=20261126" aria-label="예서 스터디 열기">
         <span class="study-ico" aria-hidden="true">🔤</span>
         <span class="study-body">
           <span class="study-kicker">초1 · 예서</span>
@@ -729,7 +729,9 @@ a{color:inherit;}
 'use strict';
 /* =========================================================================
    우리 가족 학습관리 대시보드 v2.1 (아이들 먼저 보이는 순서)
-   - 스터디 바로가기(예현 ./study/, 예서 ./yeseo/) + 가족 상태판 + 오늘의 할 일
+   - 스터디 바로가기(예현 ./study/?v=날짜, 예서 ./yeseo/?v=날짜) + 가족 상태판 + 오늘의 할 일
+     · ?v= 는 사파리 캐시 우회용. 스터디 페이지 HTML을 크게 고쳤을 때만 날짜를 올리면 되고,
+       학습지 목록은 study/materials.json 만 고치면 항상 최신으로 불러옵니다.
    - 기존 v1 저장소(family-dashboard:v1)의 상태·할 일 데이터를 그대로 이어받습니다.
      (펫·경험치·도장·타이머·미션·응원 보드는 제거, members[].tasks / statuses 는 유지)
    - 단일 HTML · 외부 라이브러리/CDN 없이 동작

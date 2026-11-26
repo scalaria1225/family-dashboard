@@ -166,7 +166,10 @@ const SUBJECTS = [
   {key:"science",name:"과학",  emoji:"🔬"}
 ];
 
-const WORKSHEETS = [
+/* 학습지 목록은 study/materials.json 에서 매번 새로 불러옵니다.
+   아래 FALLBACK_WORKSHEETS 는 인터넷·파일 문제로 목록을 못 받았을 때만 쓰는 기본값이에요.
+   새 학습지를 추가할 때는 materials.json 만 고치면 됩니다. */
+const FALLBACK_WORKSHEETS = [
   {
     subject:"english", unit:"Unit 6", type:"핵심문법 총정리", pages:"A4 1p",
     title:"Unit 6 핵심문법 총정리",
@@ -238,6 +241,8 @@ const WORKSHEETS = [
   }
 ];
 
+let WORKSHEETS = FALLBACK_WORKSHEETS.slice();
+
 const EMPTY_TEXT = "아직 등록된 학습지가 없어요. 채팅에 학습지 사진을 올려주시면 여기에 정리해 둘게요.";
 const BADGE_CLASS = {math:"math", english:"eng", social:"soc", science:"sci"};
 const SUBJECT_LABEL = {math:"수학", english:"영어", social:"사회", science:"과학"};
@@ -258,17 +263,25 @@ function renderTabs(){
   ).join("");
 }
 
+function esc(v){
+  return String(v == null ? "" : v)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 function cardHTML(w){
   const href = encodeURI(w.file).replace(/#/g, "%23");
+  const badge = BADGE_CLASS[w.subject] || "";
+  const subjectName = SUBJECT_LABEL[w.subject] || w.subject || "";
   return '<article class="card">' +
     '<div class="card-top">' +
-      '<span class="badge ' + BADGE_CLASS[w.subject] + '">' + SUBJECT_LABEL[w.subject] + '</span>' +
-      '<span class="tag">' + w.unit + '</span>' +
-      '<span class="tag">' + w.type + '</span>' +
+      '<span class="badge ' + badge + '">' + esc(subjectName) + '</span>' +
+      '<span class="tag">' + esc(w.unit) + '</span>' +
+      '<span class="tag">' + esc(w.type) + '</span>' +
     '</div>' +
-    '<h3>' + w.title + '</h3>' +
-    '<p class="meta">' + w.pages + ' · ' + w.date + ' 제작</p>' +
-    '<ul>' + w.points.map(p => '<li>' + p + '</li>').join("") + '</ul>' +
+    '<h3>' + esc(w.title) + '</h3>' +
+    '<p class="meta">' + esc(w.pages) + ' · ' + esc(w.date) + ' 제작</p>' +
+    '<ul>' + (w.points || []).map(p => '<li>' + esc(p) + '</li>').join("") + '</ul>' +
     '<div class="acts">' +
       '<a class="btn primary" href="' + href + '" target="_blank" rel="noopener">바로 보기</a>' +
       '<a class="btn" href="' + href + '" download>PDF 저장</a>' +
@@ -295,12 +308,55 @@ document.getElementById("tabs").addEventListener("click", e => {
   renderGrid();
 });
 
+/* materials.json → 카드 목록 형태로 다듬기 (배열이거나 {worksheets:[...]} 둘 다 허용) */
+function normalizeMaterials(data){
+  const list = Array.isArray(data) ? data
+    : (data && Array.isArray(data.worksheets) ? data.worksheets : null);
+  if(!list) return null;
+  return list
+    .filter(w => w && typeof w === "object" && w.file && w.title)
+    .map(w => ({
+      subject: String(w.subject || "english"),
+      unit: String(w.unit || ""),
+      type: String(w.type || ""),
+      pages: String(w.pages || ""),
+      title: String(w.title),
+      date: String(w.date || ""),
+      points: Array.isArray(w.points) ? w.points.map(p => String(p)) : [],
+      file: String(w.file)
+    }));
+}
+
+/* 사파리 캐시와 상관없이 항상 최신 목록을 받아 옵니다. */
+function loadMaterials(){
+  return fetch("./materials.json?t=" + Date.now(), { cache: "no-store" })
+    .then(res => {
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(data => {
+      const list = normalizeMaterials(data);
+      if(!list) throw new Error("목록 형식이 아니에요");
+      WORKSHEETS = list;
+      renderTabs();
+      renderGrid();
+    })
+    .catch(err => {
+      /* 실패하면 페이지에 들어 있는 기본 목록(FALLBACK_WORKSHEETS)을 그대로 보여 줍니다. */
+      if(window.console && console.warn) console.warn("학습지 목록을 새로 불러오지 못했어요.", err);
+    });
+}
+
 (function init(){
   const h = (location.hash || "").replace("#", "");
   if(SUBJECTS.some(s => s.key === h)) current = h;
   renderTabs();
   renderGrid();
+  loadMaterials();
 })();
+
+/* 사파리 뒤로가기 캐시(bfcache)로 돌아왔을 때도 최신 목록을 다시 확인해요. */
+window.addEventListener("pageshow", e => { if(e.persisted) loadMaterials(); });
 </script>
 </body>
 </html>
