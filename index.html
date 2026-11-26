@@ -436,6 +436,18 @@ a{color:inherit;}
 }
 .week-name{font-size:13px;font-weight:800;color:#4E3C2D;letter-spacing:-.3px;white-space:nowrap;}
 .week-name i{font-style:normal;font-size:10.5px;font-weight:700;color:var(--muted);margin-left:3px;}
+/* 이름 옆 알림장 바로가기 (하이클래스·학교종이) */
+.week-notice{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:1px;
+  padding:3px 7px 3px 6px;border-radius:99px;
+  font-size:9.5px;font-weight:800;letter-spacing:-.3px;line-height:1.25;
+  text-decoration:none;white-space:nowrap;
+  color:var(--deep,#A2865F);background:var(--tint,#FFF3DA);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 1px 2px rgba(150,115,70,.16);
+}
+.week-notice:active{transform:scale(.95);}
+.week-notice .week-notice-arrow{font-size:8.5px;font-weight:900;opacity:.7;margin-left:1px;}
 .week-count{margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:800;color:#B3A18C;letter-spacing:-.1px;}
 .week-list{display:grid;gap:6px;margin-bottom:8px;}
 .week-row{
@@ -757,8 +769,11 @@ function fmtAmpm(iso) {
 /* 아이들이 먼저 보이도록 순서를 예현 → 예서 → 엄마 → 아빠로 둡니다.
    (넓은 화면에서는 두 칸씩: 첫 줄 예현·예서, 아랫줄 엄마·아빠) */
 var MEMBERS = [
-  { id: 'yehyun', name: '예현', sub: '초4', emoji: '🐶', tint: '#FFE9BE', soft: '#FFF4DC', deep: '#DBA044' },
-  { id: 'yeseo',  name: '예서', sub: '초1', emoji: '🐰', tint: '#FFDDE8', soft: '#FFEDF4', deep: '#E4789F' },
+  { id: 'yehyun', name: '예현', sub: '초4', emoji: '🐶', tint: '#FFE9BE', soft: '#FFF4DC', deep: '#DBA044',
+    /* 이번주 중요한 일 머리말의 알림장 바로가기 */
+    notice: { emoji: '🔔', label: '하이클래스', href: 'https://www.hiclass.net/' } },
+  { id: 'yeseo',  name: '예서', sub: '초1', emoji: '🐰', tint: '#FFDDE8', soft: '#FFEDF4', deep: '#E4789F',
+    notice: { emoji: '🔔', label: '학교종이', href: 'https://schoolbell-e.com/ko/main/group/360682/boards/classnews' } },
   { id: 'mom',    name: '엄마', sub: '',    emoji: '🐻', tint: '#DFF1E3', soft: '#EFF9F2', deep: '#5FAE80' },
   { id: 'dad',    name: '아빠', sub: '',    emoji: '🐳', tint: '#E4EFFF', soft: '#F0F5FF', deep: '#6E97D9' }
 ];
@@ -1390,6 +1405,11 @@ function renderWeeklyImportant() {
       '<div class="week-head">' +
       '<span class="week-avatar" aria-hidden="true">' + m.emoji + '</span>' +
       '<span class="week-name">' + esc(m.name) + (m.sub ? ' <i>' + m.sub + '</i>' : '') + '</span>' +
+      (m.notice ?
+        '<a class="week-notice" href="' + esc(m.notice.href) + '" target="_blank" rel="noopener noreferrer"' +
+        ' aria-label="' + esc(m.name) + ' ' + esc(m.notice.label) + ' 알림장 새 창으로 열기">' +
+        '<span aria-hidden="true">' + m.notice.emoji + '</span> ' + esc(m.notice.label) +
+        '<span class="week-notice-arrow" aria-hidden="true">↗</span></a>' : '') +
       '<span class="week-count">' + (list.length ? doneCount + '/' + list.length + ' 완료' : '아직 없음') + '</span>' +
       '</div>' +
       '<div class="week-list">' + rows + '</div>' +
