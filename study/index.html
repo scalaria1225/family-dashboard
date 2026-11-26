@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="theme-color" content="#FFFBF4" />
+<title>📚 초4 시험대비 학습지</title>
+<style>
+:root{
+  --ink:#4A3B2C;
+  --ink-strong:#332619;
+  --muted:#8B7A66;
+  --line:#EADCC6;
+  --card:#FFFFFF;
+  --bg:#FFFBF4;
+  --accent:#B4762E;
+  --accent-soft:#FFF3DC;
+  --shadow:0 1px 2px rgba(168,132,86,.08),0 6px 18px rgba(168,132,86,.09);
+  --radius:18px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(circle at 8% 0%, #FFEFCF 0, rgba(255,239,207,0) 34%),
+    radial-gradient(circle at 96% 3%, #FFE7EE 0, rgba(255,231,238,0) 30%),
+    linear-gradient(180deg,#FFFBF4 0%, #FFF7EB 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+}
+a{color:inherit;}
+h1,h2,h3,p{margin:0;}
+
+/* ---------- 상단 ---------- */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  background:linear-gradient(180deg,rgba(255,251,244,.97) 0%,rgba(255,250,241,.9) 78%,rgba(255,250,241,0) 100%);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.back{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 13px;border-radius:999px;
+  border:1px solid var(--line);background:#FFFDF8;
+  font-size:13px;font-weight:700;color:#7A695A;text-decoration:none;
+  box-shadow:0 1px 2px rgba(168,132,86,.06);
+  transition:transform .12s ease,background .15s ease;
+}
+.back:active{transform:scale(.96);}
+.brand{display:flex;align-items:center;gap:8px;min-width:0;}
+.brand h1{font-size:17px;font-weight:800;letter-spacing:-.4px;color:var(--ink-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---------- 본문 ---------- */
+.wrap{max-width:900px;margin:0 auto;padding:4px 14px calc(40px + env(safe-area-inset-bottom));}
+.hero{
+  padding:16px 4px 6px;
+}
+.hero h2{font-size:21px;font-weight:800;letter-spacing:-.6px;color:var(--ink-strong);}
+.hero p{margin-top:5px;font-size:13.5px;color:var(--muted);font-weight:600;letter-spacing:-.1px;}
+
+.tabs{
+  display:flex;gap:7px;overflow-x:auto;padding:12px 2px 6px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex:0 0 auto;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 15px;border-radius:999px;
+  border:1px solid var(--line);background:#FFFDF8;
+  color:#7A695A;font-size:13.5px;font-weight:700;letter-spacing:-.2px;
+  box-shadow:0 1px 2px rgba(168,132,86,.06);
+  cursor:pointer;transition:transform .12s ease,background .15s ease;
+  font-family:inherit;
+}
+.tab .cnt{font-size:11.5px;font-weight:800;color:#B49A78;background:#F7EEDF;border-radius:999px;padding:1px 6px;}
+.tab.on{background:linear-gradient(180deg,#FFF4DC,#FFE9C0);border-color:#F3D49B;color:#8A5E1B;box-shadow:0 3px 8px rgba(224,176,90,.28);}
+.tab.on .cnt{color:#8A5E1B;background:#FCE6BC;}
+.tab:active{transform:scale(.96);}
+
+.grid{
+  display:grid;grid-template-columns:1fr;gap:13px;margin-top:6px;
+}
+@media (min-width:680px){ .grid{grid-template-columns:1fr 1fr;gap:16px;} }
+
+.card{
+  display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 16px 14px;box-shadow:var(--shadow);
+}
+.card-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px;}
+.badge{
+  font-size:11.5px;font-weight:800;letter-spacing:-.1px;
+  padding:3px 9px;border-radius:999px;border:1px solid transparent;
+}
+.badge.eng{background:#EAF3FF;color:#2C6BB5;border-color:#D5E6FA;}
+.badge.math{background:#FFF1E5;color:#B4652B;border-color:#F7DFC8;}
+.badge.soc{background:#EFF6E8;color:#4F7A32;border-color:#DCEBCE;}
+.badge.sci{background:#F2EFFB;color:#5F4CA8;border-color:#E2DCF6;}
+.tag{font-size:11.5px;font-weight:700;color:#8B7A66;background:#FAF4E9;border:1px solid #EFE4D2;border-radius:8px;padding:2px 7px;}
+.card h3{font-size:16px;font-weight:800;letter-spacing:-.4px;color:var(--ink-strong);line-height:1.35;}
+.meta{margin-top:4px;font-size:12px;color:var(--muted);font-weight:600;}
+.card ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;}
+.card li{position:relative;padding-left:14px;font-size:13px;color:#5B4B3B;line-height:1.5;letter-spacing:-.1px;}
+.card li::before{content:"";position:absolute;left:3px;top:8px;width:4px;height:4px;border-radius:50%;background:#E0B278;}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.btn{
+  flex:1 1 auto;min-width:0;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:11px 12px;border-radius:12px;border:1px solid var(--line);
+  background:#FFFDF8;color:#7A695A;font-size:13.5px;font-weight:700;
+  text-decoration:none;cursor:pointer;letter-spacing:-.2px;
+  transition:transform .12s ease,background .15s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn.primary{
+  background:linear-gradient(180deg,#F6A94A,#EE9527);
+  border-color:#E78C1C;color:#fff;
+  box-shadow:0 4px 12px rgba(224,145,30,.28);
+}
+.empty{
+  margin-top:8px;background:rgba(255,255,255,.7);border:1px dashed var(--line);
+  border-radius:var(--radius);padding:34px 20px;text-align:center;
+}
+.empty .ico{font-size:30px;line-height:1;}
+.empty p{margin-top:10px;font-size:13.5px;color:var(--muted);font-weight:600;letter-spacing:-.1px;}
+.hint{margin:20px 4px 0;font-size:12px;color:#A08D76;line-height:1.6;letter-spacing:-.1px;}
+.foot{margin:26px 4px 0;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:#B4A186;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="back" href="../"><span aria-hidden="true">←</span> 가족 대시보드</a>
+    <div class="brand"><h1><span aria-hidden="true">📚</span> 초4 시험대비 학습지</h1></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h2>과목별 학습지 모음</h2>
+    <p>채팅에 학습지를 올려 주시면 문제지·정리본으로 만들어 여기에 차곡차곡 모아 둘게요.</p>
+  </section>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="과목 선택"></nav>
+  <section class="grid" id="grid" aria-live="polite"></section>
+  <p class="hint">카드의 <b>바로 보기</b>는 새 탭에서 열려요. <b>PDF 저장</b>을 누르면 아이폰·아이패드 '파일' 앱이나 PC 다운로드 폴더에 저장되고, 인쇄는 PDF를 연 뒤 인쇄 버튼을 누르면 돼요.</p>
+  <p class="foot">우리 가족만 보는 페이지예요. 검색에는 나오지 않아요.</p>
+</main>
+
+<script>
+const SUBJECTS = [
+  {key:"all",   name:"전체",  emoji:"📚"},
+  {key:"math",  name:"수학",  emoji:"🔢"},
+  {key:"english",name:"영어",  emoji:"🔤"},
+  {key:"social",name:"사회",  emoji:"🌏"},
+  {key:"science",name:"과학",  emoji:"🔬"}
+];
+
+const WORKSHEETS = [
+  {
+    subject:"english", unit:"Unit 6", type:"핵심문법 총정리", pages:"A4 1p",
+    title:"Unit 6 핵심문법 총정리",
+    date:"2026-11-24",
+    points:[
+      "조건문 If — Zero Conditional(늘 참인 사실): If + 현재형, + 현재형",
+      "First Conditional(일어날 미래): If + 현재형, + will + 동사원형",
+      "과거 습관 used to + 동사원형 / didn't use to"
+    ],
+    file:"english/초4_Unit6_영어_핵심문법_총정리.pdf"
+  },
+  {
+    subject:"english", unit:"Unit 6", type:"문법 예상문제", pages:"3p · 50문항",
+    title:"Unit 6 문법 예상문제 50제",
+    date:"2026-11-24",
+    points:[
+      "조건문 Zero / First 구별해 알맞은 말 고르기",
+      "used to · didn't use to 문장 완성",
+      "3인칭 -s, will 자리 같은 실수하기 쉬운 함정 문제 포함"
+    ],
+    file:"english/초4_Unit6_영어_문법_예상문제_50제.pdf"
+  },
+  {
+    subject:"english", unit:"Unit 8", type:"핵심문법 총정리", pages:"A4 1p",
+    title:"Unit 8 핵심문법 총정리",
+    date:"2026-11-24",
+    points:[
+      "추측·가능성 may / might / could (~일지도 몰라)",
+      "부정 may not / might not",
+      "조언·질문 should, Should we ~? 어순",
+      "조동사 뒤에는 주어가 누구든 동사원형"
+    ],
+    file:"english/초4_Unit8_영어_핵심문법_총정리.pdf"
+  },
+  {
+    subject:"english", unit:"Unit 8", type:"문법 연습문제", pages:"3p · 50문항",
+    title:"Unit 8 문법 연습문제 50제",
+    date:"2026-11-24",
+    points:[
+      "알맞은 말 고르기 · 어순 · 문장 완성 50문항",
+      "may / might / could / should 구별해 쓰기",
+      "조동사 뒤 동사원형, should 의문문 함정 문제 포함"
+    ],
+    file:"english/초4_Unit8_영어_문법_연습문제_50제.pdf"
+  }
+];
+
+const EMPTY_TEXT = "아직 등록된 학습지가 없어요. 채팅에 학습지 사진을 올려주시면 여기에 정리해 둘게요.";
+const BADGE_CLASS = {math:"math", english:"eng", social:"soc", science:"sci"};
+const SUBJECT_LABEL = {math:"수학", english:"영어", social:"사회", science:"과학"};
+
+let current = "all";
+
+function count(key){
+  return key === "all" ? WORKSHEETS.length : WORKSHEETS.filter(w => w.subject === key).length;
+}
+
+function renderTabs(){
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = SUBJECTS.map(s =>
+    '<button class="tab' + (s.key === current ? " on" : "") + '" role="tab" data-key="' + s.key +
+    '" aria-selected="' + (s.key === current) + '">' +
+    '<span aria-hidden="true">' + s.emoji + '</span>' + s.name +
+    '<span class="cnt">' + count(s.key) + '</span></button>'
+  ).join("");
+}
+
+function cardHTML(w){
+  const href = encodeURI(w.file).replace(/#/g, "%23");
+  return '<article class="card">' +
+    '<div class="card-top">' +
+      '<span class="badge ' + BADGE_CLASS[w.subject] + '">' + SUBJECT_LABEL[w.subject] + '</span>' +
+      '<span class="tag">' + w.unit + '</span>' +
+      '<span class="tag">' + w.type + '</span>' +
+    '</div>' +
+    '<h3>' + w.title + '</h3>' +
+    '<p class="meta">' + w.pages + ' · ' + w.date + ' 제작</p>' +
+    '<ul>' + w.points.map(p => '<li>' + p + '</li>').join("") + '</ul>' +
+    '<div class="acts">' +
+      '<a class="btn primary" href="' + href + '" target="_blank" rel="noopener">바로 보기</a>' +
+      '<a class="btn" href="' + href + '" download>PDF 저장</a>' +
+    '</div>' +
+  '</article>';
+}
+
+function renderGrid(){
+  const grid = document.getElementById("grid");
+  const list = current === "all" ? WORKSHEETS : WORKSHEETS.filter(w => w.subject === current);
+  if(!list.length){
+    grid.innerHTML = '<div class="empty"><div class="ico" aria-hidden="true">🗂️</div><p>' + EMPTY_TEXT + '</p></div>';
+    return;
+  }
+  grid.innerHTML = list.map(cardHTML).join("");
+}
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  current = btn.dataset.key;
+  if(history.replaceState) history.replaceState(null, "", current === "all" ? location.pathname : "#" + current);
+  renderTabs();
+  renderGrid();
+});
+
+(function init(){
+  const h = (location.hash || "").replace("#", "");
+  if(SUBJECTS.some(s => s.key === h)) current = h;
+  renderTabs();
+  renderGrid();
+})();
+</script>
+</body>
+</html>
