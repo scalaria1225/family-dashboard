@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFBFA">
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="예서 스터디">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="예서의 영어 단어 발음 확인과 파닉스 연습 페이지.">
+<title>🔤 예서 스터디</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%94%A4%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#4A3B2C;
+  --ink-strong:#332619;
+  --muted:#8B7A66;
+  --line:#EADCC6;
+  --line-soft:#F4EADA;
+  --card:#FFFDF9;
+  --bg:#FFFBFA;
+  --pink:#FFE3EC;
+  --pink-deep:#D9668F;
+  --pink-soft:#FFF0F5;
+  --mint:#DFF3E5;
+  --mint-deep:#4E9C74;
+  --mint-soft:#EFF9F2;
+  --sky:#E7F0FF;
+  --sky-deep:#5A82C4;
+  --sun:#FFF0C4;
+  --sun-deep:#C08A2A;
+  --shadow:0 8px 22px rgba(168,132,86,.10),0 2px 5px rgba(168,132,86,.06);
+  --shadow-soft:0 2px 8px rgba(168,132,86,.08);
+  --r:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(circle at 6% 0%, #FFEFF5 0, rgba(255,239,245,0) 34%),
+    radial-gradient(circle at 97% 4%, #FFF6DF 0, rgba(255,246,223,0) 30%),
+    radial-gradient(circle at 50% 100%, #EAF7EE 0, rgba(234,247,238,0) 42%),
+    linear-gradient(180deg,#FFFCFA 0%,#FFF8F0 100%);
+  background-attachment:fixed;min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p{margin:0;}
+button{font:inherit;color:inherit;}
+input{font:inherit;color:inherit;}
+a{color:inherit;text-decoration:none;}
+
+/* ---------- 상단 ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  padding:calc(11px + env(safe-area-inset-top)) 14px 9px;
+  background:linear-gradient(180deg,rgba(255,252,250,.97) 0%,rgba(255,250,246,.9) 76%,rgba(255,250,246,0) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:9px;min-width:0;}
+.back{
+  flex:0 0 auto;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 12px;border-radius:999px;
+  border:1px solid var(--line);background:#FFFDF8;
+  font-size:12.5px;font-weight:800;color:#7A695A;
+  box-shadow:0 1px 2px rgba(168,132,86,.06);
+  transition:transform .12s ease;
+}
+.back:active{transform:scale(.96);}
+.brand{min-width:0;}
+.brand h1{font-size:17px;font-weight:800;letter-spacing:-.4px;color:var(--ink-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---------- 본문 ---------- */
+.wrap{max-width:900px;margin:0 auto;padding:4px 14px calc(40px + env(safe-area-inset-bottom));}
+.hero{padding:12px 4px 2px;}
+.hero h2{font-size:20px;font-weight:800;letter-spacing:-.6px;color:var(--ink-strong);}
+.hero p{margin-top:4px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:-.1px;line-height:1.5;}
+
+.tabs{
+  display:flex;gap:8px;margin:13px 0 13px;
+}
+.tab{
+  flex:1 1 0;min-width:0;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:11px 8px;border-radius:16px;
+  border:1px solid var(--line);background:#FFFDF8;
+  color:#7A695A;font-size:12.5px;font-weight:800;letter-spacing:-.3px;
+  box-shadow:0 1px 2px rgba(168,132,86,.06);
+  cursor:pointer;transition:transform .12s ease,background .15s ease;
+  text-align:center;line-height:1.25;
+}
+.tab:active{transform:scale(.97);}
+.tab.on{
+  background:linear-gradient(180deg,#FFE9F1,#FFD3E2);
+  border-color:#F7BCD0;color:#A63E67;
+  box-shadow:0 4px 12px rgba(226,140,175,.26);
+}
+.tab.on .ico,.tab .ico{font-size:15px;}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:15px;
+}
+.panel[hidden]{display:none;}
+.panel > .card + .card{margin-top:12px;}
+
+.add-card h3{font-size:14.5px;font-weight:800;letter-spacing:-.3px;color:var(--ink-strong);}
+.add-card .sub{margin-top:3px;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5;}
+
+.f-row{display:flex;flex-direction:column;gap:7px;margin-top:11px;}
+@media (min-width:560px){
+  .f-row{flex-direction:row;}
+  .f-row > .grow{flex:1 1 auto;}
+  .f-row > .narrow{flex:0 0 42%;}
+}
+.inp{
+  width:100%;padding:11px 12px;border-radius:13px;
+  border:1.5px solid #EFE0CB;background:#fff;
+  font-size:14px;font-weight:700;color:var(--ink);outline:none;
+  letter-spacing:-.1px;
+}
+.inp::placeholder{color:#BFB0A0;font-weight:600;}
+.inp:focus{border-color:#F3B8CE;box-shadow:0 0 0 3px rgba(243,184,206,.22);}
+.btn{
+  border-radius:14px;border:1px solid var(--line);
+  padding:11px 15px;cursor:pointer;
+  font-size:13.5px;font-weight:800;letter-spacing:-.2px;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  transition:transform .12s ease,filter .15s ease;
+  box-shadow:var(--shadow-soft);white-space:nowrap;
+}
+.btn:active{transform:scale(.97);}
+.btn.primary{
+  background:linear-gradient(180deg,#FFB8D0,#FF9CBE);
+  border-color:#F58FB3;color:#6D2242;
+  box-shadow:0 4px 12px rgba(226,130,168,.30);
+}
+.btn.mint{
+  background:linear-gradient(180deg,#B7E8C7,#8FD3AA);
+  border-color:#7CC79A;color:#20553A;
+  box-shadow:0 4px 12px rgba(110,190,145,.26);
+}
+.btn.wide{width:100%;margin-top:10px;}
+
+.detect{
+  margin-top:9px;font-size:12px;font-weight:700;color:#8B7A66;
+  background:#FFF6E8;border:1px dashed #F0DFC4;border-radius:12px;
+  padding:8px 11px;line-height:1.5;
+}
+.detect b{color:#B4622B;}
+.detect:empty{display:none;}
+
+.quick{margin-top:11px;}
+.quick .qlabel{font-size:11px;font-weight:800;color:#A6967F;letter-spacing:-.1px;margin-bottom:6px;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;}
+.chip{
+  padding:6px 10px;border-radius:999px;cursor:pointer;
+  border:1px solid #EFE2CE;background:#FFFDF8;
+  font-size:12.5px;font-weight:800;color:#7A695A;letter-spacing:.2px;
+  transition:transform .12s ease,background .15s ease;
+  line-height:1.2;
+}
+.chip:active{transform:scale(.95);}
+.chip.on{background:linear-gradient(180deg,#FFE9F1,#FFD3E2);border-color:#F5B9CE;color:#A63E67;}
+
+.list-head{display:flex;align-items:center;gap:8px;margin:16px 2px 9px;}
+.list-head h3{font-size:14px;font-weight:800;letter-spacing:-.3px;color:var(--ink-strong);}
+.list-head .cnt{
+  font-size:11px;font-weight:800;color:#B4622B;background:#FFF0CE;
+  border:1px solid #F6DCA4;border-radius:99px;padding:2px 8px;
+}
+.list-head .right{margin-left:auto;font-size:11px;font-weight:700;color:#A6967F;}
+
+/* ---------- 단어 카드 ---------- */
+.word-grid{display:grid;grid-template-columns:1fr;gap:9px;}
+@media (min-width:640px){ .word-grid{grid-template-columns:1fr 1fr;gap:11px;} }
+.word-card{
+  position:relative;
+  padding:12px 12px 11px;border-radius:18px;
+  border:1px solid var(--line);background:linear-gradient(180deg,#FFFFFF,#FFF9F6);
+  box-shadow:var(--shadow-soft);
+}
+.word-card.learned{background:linear-gradient(180deg,#F5FBF7,#EDF8F1);border-color:#D5EBDD;}
+.wc-top{display:flex;align-items:flex-start;gap:8px;}
+.wc-word{
+  flex:1 1 auto;min-width:0;
+  font-size:20px;font-weight:800;letter-spacing:-.3px;color:#3E2F21;
+  line-height:1.2;word-break:break-word;
+}
+.word-card.learned .wc-word{color:#5C8A70;}
+.wc-mean{margin-top:3px;font-size:12px;font-weight:700;color:#8B7A66;letter-spacing:-.1px;word-break:break-word;}
+.wc-btns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.sbtn{
+  flex:1 1 0;min-width:0;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  padding:9px 6px;border-radius:12px;cursor:pointer;
+  border:1px solid #EFE2CE;background:#FFFDF8;
+  font-size:12px;font-weight:800;color:#7A695A;letter-spacing:-.2px;
+  transition:transform .12s ease,background .15s ease;
+}
+.sbtn .ico{font-size:14px;line-height:1;}
+.sbtn:active{transform:scale(.95);}
+.sbtn.mic{background:linear-gradient(180deg,#F2F8FF,#E7F1FF);border-color:#D5E4FA;color:#4A6FA8;}
+.sbtn.mic.listening{
+  background:linear-gradient(180deg,#FFD9E6,#FFBBD1);border-color:#F79CBB;color:#8E2549;
+  animation:pulse 1s ease-in-out infinite;
+}
+.sbtn[disabled]{opacity:.5;pointer-events:none;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(247,156,187,.55);}50%{box-shadow:0 0 0 7px rgba(247,156,187,0);}}
+.wc-foot{display:flex;align-items:center;gap:6px;margin-top:9px;}
+.learn-chip{
+  padding:5px 10px;border-radius:999px;cursor:pointer;
+  border:1px solid #E7DCC8;background:#FFFCF5;
+  font-size:11px;font-weight:800;color:#A6967F;
+}
+.learn-chip.on{background:#E7F7EE;border-color:#C7E8D5;color:#3E8B60;}
+.del-btn{
+  margin-left:auto;width:26px;height:26px;border-radius:9px;cursor:pointer;
+  border:1px solid #F2E7D7;background:#FFFCF6;color:#D0A198;
+  font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;
+}
+.fb{
+  margin-top:8px;font-size:11.5px;font-weight:800;letter-spacing:-.2px;
+  border-radius:10px;padding:7px 9px;line-height:1.45;
+  display:none;
+}
+.fb.ok{display:block;background:#EAF8F0;border:1px solid #CDEBD9;color:#2F7C55;}
+.fb.no{display:block;background:#FFF3E8;border:1px solid #F7DEC4;color:#A45E1E;}
+.fb.info{display:block;background:#F3F6FB;border:1px solid #DEE6F3;color:#5A7AA8;}
+
+.empty{
+  text-align:center;padding:26px 16px;border-radius:18px;
+  border:1.5px dashed var(--line);background:rgba(255,255,255,.66);
+}
+.empty .ico{font-size:28px;line-height:1;}
+.empty p{margin-top:9px;font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.55;}
+
+/* ---------- 파닉스 세트 ---------- */
+.set-card{margin-top:0;}
+.set-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.ph-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:46px;padding:7px 13px;border-radius:13px;
+  background:linear-gradient(180deg,#FFE7B8,#FFD389);
+  border:1px solid #F2C36D;color:#8A5A16;
+  font-size:18px;font-weight:800;letter-spacing:.3px;
+}
+.set-title{font-size:13px;font-weight:800;color:#5C4A3B;letter-spacing:-.2px;}
+.set-title small{display:block;font-size:11px;font-weight:700;color:#A6967F;letter-spacing:-.1px;}
+.set-count{margin-left:auto;font-size:11px;font-weight:800;color:#B4622B;background:#FFF0CE;border:1px solid #F6DCA4;border-radius:99px;padding:2px 9px;}
+.ph-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;}
+@media (min-width:520px){ .ph-grid{grid-template-columns:1fr 1fr;} }
+@media (min-width:820px){ .ph-grid{grid-template-columns:1fr 1fr 1fr;} }
+.ph-word{
+  padding:10px 11px;border-radius:16px;
+  border:1px solid var(--line-soft);background:linear-gradient(180deg,#FFFFFF,#FFFBF7);
+  box-shadow:0 1px 3px rgba(168,132,86,.06);
+}
+.ph-text{
+  font-size:19px;font-weight:800;letter-spacing:-.2px;color:#3E2F21;line-height:1.25;
+  word-break:break-word;
+}
+.ph-text em.ph{
+  font-style:normal;
+  color:#D0468C;
+  background:linear-gradient(180deg,rgba(255,196,222,.55),rgba(255,196,222,.32));
+  border-radius:5px;padding:0 1px;
+}
+.ph-tools{display:flex;gap:5px;margin-top:8px;}
+.tbtn{
+  flex:1 1 0;min-width:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 4px;border-radius:11px;cursor:pointer;
+  border:1px solid #EFE2CE;background:#FFFDF8;
+  font-size:14px;line-height:1;
+  transition:transform .12s ease,background .15s ease;
+}
+.tbtn:active{transform:scale(.94);}
+.tbtn.mic{background:linear-gradient(180deg,#F2F8FF,#E7F1FF);border-color:#D5E4FA;}
+.tbtn.mic.listening{
+  background:linear-gradient(180deg,#FFD9E6,#FFBBD1);border-color:#F79CBB;
+  animation:pulse 1s ease-in-out infinite;
+}
+.addword{display:flex;gap:6px;margin-top:12px;}
+.addword .inp{padding:9px 11px;font-size:13px;}
+.hintline{margin-top:10px;font-size:11px;color:#A6967F;font-weight:600;line-height:1.5;letter-spacing:-.1px;}
+.foot{margin:24px 4px 0;padding-top:13px;border-top:1px solid var(--line);font-size:11px;color:#B4A186;line-height:1.6;}
+
+/* ---------- 토스트 ---------- */
+.toasts{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;
+  display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;padding:0 14px;}
+.toast{
+  max-width:340px;background:rgba(74,58,46,.95);color:#FFF8EC;
+  font-size:12.5px;font-weight:800;letter-spacing:-.2px;
+  padding:9px 14px;border-radius:99px;box-shadow:0 8px 20px rgba(74,58,46,.3);
+  animation:toastIn .26s cubic-bezier(.2,1.4,.4,1), toastOut .3s ease-in 2.4s forwards;
+}
+@keyframes toastIn{from{transform:translateY(14px) scale(.94);opacity:0;}to{transform:none;opacity:1;}}
+@keyframes toastOut{to{transform:translateY(8px) scale(.96);opacity:0;}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important;}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="back" href="../"><span aria-hidden="true">←</span> 메인 대시보드</a>
+    <div class="brand"><h1><span aria-hidden="true">🔤</span> 예서 스터디</h1></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h2>예서 · 초1 영어 놀이터</h2>
+    <p>모르는 단어는 소리로 듣고 따라 읽어 봐요. 파닉스는 비슷한 단어끼리 모아서 연습해요.</p>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="예서 스터디 메뉴">
+    <button class="tab" role="tab" id="tab-words" data-tab="words" aria-controls="panel-words" aria-selected="true">
+      <span class="ico" aria-hidden="true">📖</span> 모르는 단어 &amp; 발음 확인
+    </button>
+    <button class="tab" role="tab" id="tab-phonics" data-tab="phonics" aria-controls="panel-phonics" aria-selected="false">
+      <span class="ico" aria-hidden="true">🔤</span> 파닉스 연습
+    </button>
+  </nav>
+
+  <!-- ============ 탭 1: 모르는 단어 & 발음 확인 ============ -->
+  <section class="panel" id="panel-words" role="tabpanel" aria-labelledby="tab-words">
+    <div class="card add-card">
+      <h3>📖 새 단어 넣기</h3>
+      <p class="sub">영어책을 읽다가 모르는 단어를 적어 두면, 소리로 듣고 따라 읽으며 익힐 수 있어요.</p>
+      <div class="f-row">
+        <input class="inp grow" id="w-word" maxlength="30" placeholder="영어 단어 (예: brave)" aria-label="영어 단어">
+        <input class="inp narrow" id="w-mean" maxlength="40" placeholder="뜻 메모 (선택)" aria-label="뜻 메모">
+        <button class="btn primary" data-act="word-add">저장</button>
+      </div>
+      <p class="detect" id="sr-notice" hidden></p>
+    </div>
+
+    <div class="list-head">
+      <h3>내 단어장</h3>
+      <span class="cnt" id="word-count">0</span>
+      <span class="right" id="learned-count"></span>
+    </div>
+    <div id="word-list"></div>
+  </section>
+
+  <!-- ============ 탭 2: 파닉스 연습 ============ -->
+  <section class="panel" id="panel-phonics" role="tabpanel" aria-labelledby="tab-phonics" hidden>
+    <div class="card add-card">
+      <h3>🔤 파닉스 연습 만들기</h3>
+      <p class="sub">못 읽는 단어를 넣으면 어떤 파닉스인지 찾아 드려요. 파닉스만 골라도 바로 연습할 수 있어요.</p>
+      <div class="f-row">
+        <input class="inp grow" id="p-word" maxlength="30" placeholder="못 읽는 단어 (예: ship)" aria-label="못 읽는 단어">
+        <input class="inp narrow" id="p-pattern" maxlength="6" placeholder="파닉스 (예: sh)" aria-label="파닉스" autocomplete="off" spellcheck="false">
+        <button class="btn primary" data-act="set-make">연습하기</button>
+      </div>
+      <p class="detect" id="p-detect"></p>
+      <div class="quick">
+        <div class="qlabel">빠른 선택</div>
+        <div class="chips" id="quick-chips"></div>
+      </div>
+    </div>
+
+    <div id="set-area"></div>
+  </section>
+
+  <p class="foot">우리 가족만 보는 페이지예요. 검색에는 나오지 않아요. · 저장은 이 기기의 브라우저에만 돼요.</p>
+</main>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================================
+   예서 스터디 — 단어 발음 확인 & 파닉스 연습
+   - 단일 HTML · 외부 CDN 없음
+   - 소리: Web Speech API speechSynthesis (en-US)
+   - 따라 읽기: SpeechRecognition / webkitSpeechRecognition (en-US)
+   - 저장: localStorage ('yeseo-study:v1')
+   ========================================================================= */
+
+/* ------------------------- 0. 도우미 ------------------------- */
+function $(id){ return document.getElementById(id); }
+var ESC_MAP = { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' };
+function esc(s){ return String(s===null||s===undefined?'':s).replace(/[&<>"']/g, function(c){ return ESC_MAP[c]; }); }
+function uid(){ return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function toast(msg){
+  var host = $('toasts'); if(!host) return;
+  var el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  host.appendChild(el);
+  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 3000);
+}
+
+/* ------------------------- 1. 내장 파닉스 단어 은행 ------------------------- */
+/* 패턴 44종 · 패턴마다 초1 수준 단어 8~12개 */
+var PHONICS = {
+  'sh':  ['ship','shop','fish','wish','shell','shine','brush','dish','shirt','shut'],
+  'ch':  ['chair','chip','chin','cheese','lunch','beach','chick','cherry','much','watch'],
+  'th':  ['this','that','thin','thick','three','thumb','bath','math','teeth','path'],
+  'wh':  ['when','what','where','which','white','wheel','whale','whip'],
+  'ph':  ['phone','photo','graph','dolphin','elephant','phonics','trophy','phase'],
+  'ck':  ['duck','sock','rock','kick','back','neck','clock','truck','black'],
+  'ng':  ['ring','king','sing','long','song','wing','swing','thing','spring'],
+  'nk':  ['pink','bank','sink','tank','thank','drink','trunk','wink'],
+  'ee':  ['see','bee','tree','feet','green','sleep','sheep','sweet','queen','feel'],
+  'ea':  ['eat','tea','sea','read','meat','beach','clean','dream','bread','head'],
+  'ai':  ['rain','train','wait','mail','tail','paint','chain','snail','brain'],
+  'ay':  ['day','play','say','way','stay','gray','clay','today','holiday'],
+  'oa':  ['boat','coat','goat','road','soap','toast','float','load','coach'],
+  'ow':  ['cow','how','now','down','town','brown','flower','snow','window','slow'],
+  'oo':  ['book','look','cook','moon','food','room','zoo','boot','foot','pool'],
+  'ou':  ['out','loud','mouse','house','cloud','round','sound','mouth','count','south'],
+  'ar':  ['car','star','farm','arm','park','jar','card','dark','shark'],
+  'or':  ['for','fork','corn','horse','storm','short','north','sport','morning'],
+  'er':  ['her','water','sister','brother','under','tiger','flower','teacher','paper'],
+  'ir':  ['bird','girl','first','shirt','skirt','third','birthday','circle'],
+  'ur':  ['fur','turn','burn','hurt','nurse','purple','turtle','church'],
+  'a_e': ['cake','name','game','late','gate','tape','plane','snake','grape'],
+  'i_e': ['bike','like','time','five','nine','kite','ride','white','smile'],
+  'o_e': ['home','nose','bone','note','rope','hope','rose','close','stone'],
+  'u_e': ['cube','cute','tube','mute','huge','June','rule','flute'],
+  'bl':  ['black','blue','block','blow','blanket','blend','blind','blouse','blush'],
+  'cl':  ['clap','clock','clean','class','cloud','climb','club','clown','clip'],
+  'fl':  ['flag','flat','fly','floor','flower','flip','float','flame','flash'],
+  'gl':  ['glad','glass','glue','glove','globe','glow','glide','glasses'],
+  'pl':  ['plan','play','plane','plus','plate','plant','please','plum','plug'],
+  'sl':  ['slip','slide','slow','sleep','slim','sled','slap','slug'],
+  'br':  ['bread','brown','bring','brush','branch','brick','bridge','brave','brother'],
+  'cr':  ['crab','cry','cream','cross','crown','crash','crawl','crop','craft'],
+  'dr':  ['draw','drop','dress','drum','dream','drink','drive','dragon','dry'],
+  'fr':  ['frog','from','front','fruit','fresh','friend','Friday','freeze','frozen'],
+  'gr':  ['green','gray','grass','grape','grow','group','grand','grin','ground'],
+  'pr':  ['pray','prize','print','proud','press','price','prince','princess'],
+  'tr':  ['tree','train','truck','try','trip','track','trap','treat','triangle'],
+  'sp':  ['spin','spot','spell','spider','spoon','space','speak','sport','spring'],
+  'st':  ['star','stop','stand','step','stone','story','street','stick','student','stamp'],
+  'sm':  ['small','smart','smile','smoke','smooth','smash','smell','smear'],
+  'sn':  ['snap','snake','snow','snack','snail','sneeze','sniff','snug'],
+  'sw':  ['swim','swing','sweet','swan','sweater','sweep','swallow','switch']
+};
+
+/* 짧은 소리 안내 (엄마가 아이에게 말해 줄 때) */
+var PHONICS_HINT = {
+  'sh':'쉬～ (조용히 할 때 소리)','ch':'취/차 (입술 앞으로)','th':'번데기 소리 (혀를 이 사이에)',
+  'wh':'우/휘 (입술 둥글게)','ph':'ㅍ (f 소리)','ck':'ㄱ (짧게 톡)','ng':'응～ (코로)',
+  'nk':'응크','ee':'이～ (길게)','ea':'이/에','ai':'에이','ay':'에이','oa':'오우','ow':'아우/오우',
+  'oo':'우～/우','ou':'아우','ar':'아～','or':'오～','er':'어～','ir':'어～','ur':'어～',
+  'a_e':'에이 (끝 e는 소리 없음)','i_e':'아이','o_e':'오우','u_e':'유～',
+  'bl':'브을','cl':'크을','fl':'프을','gl':'그을','pl':'프을','sl':'스을',
+  'br':'브르','cr':'크르','dr':'드르','fr':'프르','gr':'그르','pr':'프르','tr':'트르',
+  'sp':'스프','st':'스트','sm':'스므','sn':'스느','sw':'스우'
+};
+
+var PATTERN_KEYS = Object.keys(PHONICS);
+
+/* ------------------------- 2. 저장소 ------------------------- */
+var DB_KEY = 'yeseo-study:v1';
+
+var db = { v: 1, words: [], sets: {}, tab: 'words', pattern: 'sh' };
+var storageOk = true;
+
+function loadDB(){
+  var raw = null;
+  try { raw = window.localStorage.getItem(DB_KEY); }
+  catch(e){ storageOk = false; }
+  if(!raw) return;
+  var parsed = null;
+  try { parsed = JSON.parse(raw); } catch(e2){ parsed = null; }
+  if(!parsed || typeof parsed !== 'object') return;
+
+  var words = [];
+  if(Object.prototype.toString.call(parsed.words) === '[object Array]'){
+    parsed.words.forEach(function(w){
+      if(!w || typeof w.word !== 'string') return;
+      var word = w.word.trim().slice(0,30);
+      if(!word) return;
+      words.push({
+        id: (typeof w.id === 'string' && w.id) ? w.id : uid(),
+        word: word,
+        meaning: (typeof w.meaning === 'string') ? w.meaning.trim().slice(0,40) : '',
+        learned: !!w.learned,
+        at: (typeof w.at === 'string') ? w.at : new Date().toISOString()
+      });
+    });
+  }
+  db.words = words;
+
+  var sets = {};
+  if(parsed.sets && typeof parsed.sets === 'object'){
+    Object.keys(parsed.sets).forEach(function(k){
+      var key = String(k).toLowerCase().trim().slice(0,6);
+      if(!key) return;
+      var list = parsed.sets[k];
+      if(Object.prototype.toString.call(list) !== '[object Array]') return;
+      var out = [];
+      list.forEach(function(w){
+        if(typeof w !== 'string') return;
+        var t = w.trim().slice(0,30);
+        if(t && out.indexOf(t) < 0) out.push(t);
+      });
+      sets[key] = out;
+    });
+  }
+  db.sets = sets;
+
+  if(parsed.tab === 'phonics' || parsed.tab === 'words') db.tab = parsed.tab;
+  if(typeof parsed.pattern === 'string') db.pattern = parsed.pattern.toLowerCase().trim().slice(0,6) || 'sh';
+}
+
+function saveDB(){
+  try{
+    window.localStorage.setItem(DB_KEY, JSON.stringify(db));
+    storageOk = true;
+  }catch(e){
+    storageOk = false;
+  }
+}
+
+/* ------------------------- 3. 소리 (듣기) ------------------------- */
+var synthOk = (typeof window !== 'undefined' && 'speechSynthesis' in window);
+var voices = [];
+
+function loadVoices(){
+  if(!synthOk) return;
+  try { voices = window.speechSynthesis.getVoices() || []; } catch(e){ voices = []; }
+}
+if(synthOk){
+  loadVoices();
+  if(typeof window.speechSynthesis.addEventListener === 'function'){
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  } else {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
+
+function pickVoice(){
+  if(!voices.length) loadVoices();
+  var i;
+  for(i=0;i<voices.length;i++){ if(/^en[-_]US/i.test(voices[i].lang)) return voices[i]; }
+  for(i=0;i<voices.length;i++){ if(/^en[-_]GB/i.test(voices[i].lang)) return voices[i]; }
+  for(i=0;i<voices.length;i++){ if(/^en/i.test(voices[i].lang)) return voices[i]; }
+  return null;
+}
+
+function speak(text, rate){
+  if(!synthOk){
+    toast('이 브라우저는 소리로 들려주기를 지원하지 않아요');
+    return;
+  }
+  var word = String(text || '').trim();
+  if(!word) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(word);
+    u.lang = 'en-US';
+    u.rate = (rate === 0.7) ? 0.7 : 1.0;
+    u.pitch = 1;
+    u.volume = 1;
+    var v = pickVoice();
+    if(v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  }catch(e){
+    toast('소리를 재생하지 못했어요');
+  }
+}
+
+/* ------------------------- 4. 따라 읽기 (음성 인식) ------------------------- */
+var SRClass = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+var recSupported = !!SRClass;
+var rec = { obj: null, key: null, target: '' };
+
+function normSpeech(s){
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z' ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function speechMatches(heard, target){
+  var h = normSpeech(heard), t = normSpeech(target);
+  if(!h || !t) return false;
+  if(h === t) return true;
+  var parts = h.split(' ');
+  for(var i=0;i<parts.length;i++){ if(parts[i] === t) return true; }
+  return false;
+}
+
+function fbEl(key){
+  var nodes = document.querySelectorAll('[data-fb]');
+  for(var i=0;i<nodes.length;i++){
+    if(nodes[i].getAttribute('data-fb') === key) return nodes[i];
+  }
+  return null;
+}
+function micBtn(key){
+  var nodes = document.querySelectorAll('[data-mic]');
+  for(var i=0;i<nodes.length;i++){
+    if(nodes[i].getAttribute('data-mic') === key) return nodes[i];
+  }
+  return null;
+}
+
+function setFb(key, kind, text){
+  var el = fbEl(key);
+  if(!el) return;
+  el.className = 'fb ' + kind;
+  el.textContent = text;
+}
+
+function stopListening(silent){
+  if(rec.obj){
+    try { rec.obj.stop(); } catch(e){ /* 무시 */ }
+    rec.obj = null;
+  }
+  var b = rec.key ? micBtn(rec.key) : null;
+  if(b) b.classList.remove('listening');
+  if(!silent) rec.key = null;
+}
+
+function listenFor(word, key){
+  if(!recSupported) return;
+  /* 같은 버튼을 다시 누르면 멈춤 */
+  if(rec.obj && rec.key === key){
+    stopListening(true);
+    setFb(key, 'info', '녹음을 멈췄어요. 다시 눌러 읽어 보세요 🎤');
+    rec.key = null;
+    return;
+  }
+  stopListening(true);
+
+  var r;
+  try { r = new SRClass(); }
+  catch(e){
+    setFb(key, 'info', '이 브라우저에서는 음성 인식을 시작할 수 없어요.');
+    return;
+  }
+  r.lang = 'en-US';
+  r.interimResults = false;
+  r.maxAlternatives = 5;
+  r.continuous = false;
+
+  rec.obj = r;
+  rec.key = key;
+  rec.target = word;
+
+  var btn = micBtn(key);
+  if(btn) btn.classList.add('listening');
+  setFb(key, 'info', '듣고 있어요… "' + word + '" 하고 읽어 봐요 🎤');
+
+  r.onresult = function(ev){
+    var alts = [];
+    try{
+      var res = ev.results[ev.resultIndex] || ev.results[0];
+      for(var i=0;i<res.length;i++) alts.push(res[i].transcript || '');
+    }catch(e){ /* 무시 */ }
+    var heard = alts.join(' / ').trim();
+    var ok = false;
+    for(var j=0;j<alts.length;j++){
+      if(speechMatches(alts[j], word)){ ok = true; heard = alts[j]; break; }
+    }
+    if(ok){
+      setFb(key, 'ok', '정확해요! 참 잘했어요 👏');
+    } else if(heard){
+      setFb(key, 'no', '조금 다르게 들렸어요 (들린 발음: ' + heard + ')');
+    } else {
+      setFb(key, 'info', '잘 안 들렸어요. 조금 더 크게 다시 읽어 볼까요? 🎤');
+    }
+  };
+
+  r.onerror = function(ev){
+    var code = ev && ev.error ? ev.error : '';
+    if(code === 'not-allowed' || code === 'service-not-allowed'){
+      setFb(key, 'info', '마이크 사용을 허락해 주세요. (브라우저 주소창 옆 마이크 허용)');
+    } else if(code === 'no-speech'){
+      setFb(key, 'info', '잘 안 들렸어요. 다시 한 번 읽어 볼까요? 🎤');
+    } else if(code === 'audio-capture'){
+      setFb(key, 'info', '마이크를 찾지 못했어요. 마이크가 연결돼 있는지 확인해 주세요.');
+    } else if(code === 'network'){
+      setFb(key, 'info', '인터넷 연결 때문에 인식이 안 됐어요. 잠시 뒤 다시 해 볼까요?');
+    } else if(code !== 'aborted'){
+      setFb(key, 'info', '음성을 알아듣지 못했어요. 다시 한 번 해 볼까요?');
+    }
+  };
+
+  r.onend = function(){
+    var b = micBtn(key);
+    if(b) b.classList.remove('listening');
+    if(rec.obj === r){ rec.obj = null; rec.key = null; }
+  };
+
+  try { r.start(); }
+  catch(e){
+    var b2 = micBtn(key);
+    if(b2) b2.classList.remove('listening');
+    rec.obj = null; rec.key = null;
+    setFb(key, 'info', '음성 인식을 시작하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
+  }
+}
+
+/* ------------------------- 5. 파닉스 계산 ------------------------- */
+function allPatterns(){
+  var keys = PATTERN_KEYS.slice();
+  Object.keys(db.sets).forEach(function(k){ if(keys.indexOf(k) < 0) keys.push(k); });
+  return keys;
+}
+
+/* 단어에서 대표 파닉스 찾기 (긴 패턴부터) */
+function detectPattern(word){
+  var lw = String(word || '').toLowerCase().replace(/[^a-z]/g, '');
+  if(!lw) return '';
+  var keys = allPatterns().slice().sort(function(a,b){ return b.length - a.length; });
+  for(var i=0;i<keys.length;i++){
+    var k = keys[i];
+    if(k.indexOf('_') >= 0){
+      var parts = k.split('_');
+      var a = parts[0], e = parts[parts.length-1];
+      var at = lw.indexOf(a);
+      if(lw.length > 2 && at >= 0 && at < lw.length - 1 && lw.charAt(lw.length - 1) === e){
+        var between = lw.slice(at + 1, lw.length - 1);
+        if(between.length === 1 && 'aeiou'.indexOf(between) < 0) return k;
+      }
+    } else if(lw.indexOf(k) >= 0){
+      return k;
+    }
+  }
+  return '';
+}
+
+/* 파닉스 철자 부분만 색깔 강조 */
+function hlHTML(word, pattern){
+  var w = String(word || ''), p = String(pattern || '').toLowerCase();
+  if(!p) return esc(w);
+  var lw = w.toLowerCase();
+
+  if(p.indexOf('_') >= 0){
+    var parts = p.split('_');
+    var a = parts[0], e = parts[parts.length-1];
+    var at = lw.indexOf(a);
+    if(lw.length > 2 && at >= 0 && at < lw.length - 1 && lw.charAt(lw.length - 1) === e){
+      return esc(w.slice(0, at)) +
+        '<em class="ph">' + esc(w.charAt(at)) + '</em>' +
+        esc(w.slice(at + 1, w.length - 1)) +
+        '<em class="ph">' + esc(w.charAt(w.length - 1)) + '</em>';
+    }
+    return esc(w);
+  }
+
+  var out = '', from = 0, idx;
+  while((idx = lw.indexOf(p, from)) >= 0){
+    out += esc(w.slice(from, idx)) + '<em class="ph">' + esc(w.slice(idx, idx + p.length)) + '</em>';
+    from = idx + p.length;
+  }
+  out += esc(w.slice(from));
+  return out;
+}
+
+function wordsForPattern(pattern){
+  var base = PHONICS[pattern] ? PHONICS[pattern].slice() : [];
+  var extra = db.sets[pattern] || [];
+  extra.forEach(function(w){
+    var exists = false;
+    for(var i=0;i<base.length;i++){ if(base[i].toLowerCase() === w.toLowerCase()){ exists = true; break; } }
+    if(!exists) base.push(w);
+  });
+  return base;
+}
+
+function addWordToSet(pattern, word, silent){
+  var clean = String(word || '').replace(/[^A-Za-z' -]/g, '').replace(/\s+/g, ' ').trim().slice(0,30);
+  if(!clean){
+    if(!silent) toast('영어 단어를 적어 주세요');
+    return false;
+  }
+  var existing = wordsForPattern(pattern);
+  for(var i=0;i<existing.length;i++){
+    if(existing[i].toLowerCase() === clean.toLowerCase()){
+      if(!silent) toast('이미 이 세트에 있는 단어예요');
+      return false;
+    }
+  }
+  if(!db.sets[pattern]) db.sets[pattern] = [];
+  db.sets[pattern].push(clean);
+  saveDB();
+  return true;
+}
+
+/* ------------------------- 6. 렌더 ------------------------- */
+function renderTabs(){
+  ['words','phonics'].forEach(function(t){
+    var btn = $('tab-' + t);
+    if(!btn) return;
+    var on = (db.tab === t);
+    btn.className = 'tab' + (on ? ' on' : '');
+    btn.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  var pw = $('panel-words'), pp = $('panel-phonics');
+  if(pw) pw.hidden = (db.tab !== 'words');
+  if(pp) pp.hidden = (db.tab !== 'phonics');
+}
+
+function renderWordList(){
+  var host = $('word-list');
+  if(!host) return;
+  var list = db.words.slice().sort(function(a,b){
+    return String(b.at).localeCompare(String(a.at));
+  });
+
+  var learned = 0;
+  db.words.forEach(function(w){ if(w.learned) learned++; });
+  var cnt = $('word-count'); if(cnt) cnt.textContent = String(db.words.length);
+  var lc = $('learned-count'); if(lc) lc.textContent = db.words.length ? ('익힌 단어 ' + learned + '/' + db.words.length) : '';
+
+  if(!list.length){
+    host.innerHTML = '<div class="empty"><div class="ico" aria-hidden="true">📖</div>' +
+      '<p>아직 담은 단어가 없어요.<br>책에서 모르는 단어를 위에 적어 보세요!</p></div>';
+    return;
+  }
+
+  var html = '<div class="word-grid">';
+  list.forEach(function(w){
+    var key = 'w:' + w.id;
+    html += '<div class="word-card' + (w.learned ? ' learned' : '') + '">' +
+      '<div class="wc-top"><div class="wc-word">' + esc(w.word) + '</div></div>' +
+      (w.meaning ? '<p class="wc-mean">' + esc(w.meaning) + '</p>' : '') +
+      '<div class="wc-btns">' +
+        '<button class="sbtn" data-act="say" data-word="' + esc(w.word) + '" data-rate="1" aria-label="' + esc(w.word) + ' 보통 속도로 듣기"><span class="ico" aria-hidden="true">🔊</span>듣기</button>' +
+        '<button class="sbtn" data-act="say" data-word="' + esc(w.word) + '" data-rate="0.7" aria-label="' + esc(w.word) + ' 천천히 듣기"><span class="ico" aria-hidden="true">🐢</span>천천히</button>' +
+        '<button class="sbtn mic" data-act="mic" data-word="' + esc(w.word) + '" data-mic="' + esc(key) + '" aria-label="' + esc(w.word) + ' 따라 읽고 발음 확인"><span class="ico" aria-hidden="true">🎤</span>따라 읽기</button>' +
+      '</div>' +
+      '<p class="fb" data-fb="' + esc(key) + '"></p>' +
+      '<div class="wc-foot">' +
+        '<button class="learn-chip' + (w.learned ? ' on' : '') + '" data-act="learn" data-id="' + esc(w.id) + '" aria-pressed="' + (w.learned ? 'true' : 'false') + '">' + (w.learned ? '✓ 익혔어요' : '익혔어요') + '</button>' +
+        '<button class="del-btn" data-act="word-del" data-id="' + esc(w.id) + '" aria-label="' + esc(w.word) + ' 지우기">✕</button>' +
+      '</div>' +
+      '</div>';
+  });
+  html += '</div>';
+  host.innerHTML = html;
+}
+
+function renderQuickChips(){
+  var host = $('quick-chips');
+  if(!host) return;
+  var html = '';
+  allPatterns().forEach(function(k){
+    html += '<button class="chip' + (k === db.pattern ? ' on' : '') + '" data-act="set-pick" data-pattern="' + esc(k) + '" aria-pressed="' + (k === db.pattern ? 'true' : 'false') + '">' + esc(k) + '</button>';
+  });
+  host.innerHTML = html;
+}
+
+function renderSetArea(){
+  var host = $('set-area');
+  if(!host) return;
+  var p = db.pattern;
+  if(!p){
+    host.innerHTML = '<div class="empty"><div class="ico" aria-hidden="true">🔤</div>' +
+      '<p>위에서 파닉스를 골라 주세요.<br>예: <b>sh</b> 를 고르면 ship·shop·fish 처럼 비슷한 단어가 모여요.</p></div>';
+    return;
+  }
+  var words = wordsForPattern(p);
+  var hint = PHONICS_HINT[p] || (PHONICS[p] ? '' : '직접 추가한 세트예요');
+  var isBuiltin = !!PHONICS[p];
+
+  var html = '<article class="card set-card">' +
+    '<div class="set-head">' +
+      '<span class="ph-chip">' + esc(p) + '</span>' +
+      '<div class="set-title">' + (isBuiltin ? '비슷한 소리가 나는 단어' : '내가 만든 세트') +
+        (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' +
+      '<span class="set-count">' + words.length + '개</span>' +
+    '</div>';
+
+  if(!words.length){
+    html += '<div class="empty" style="margin-top:12px;"><div class="ico" aria-hidden="true">📝</div>' +
+      '<p>아직 단어가 없어요. 아래에서 단어를 추가해 보세요.</p></div>';
+  } else {
+    html += '<div class="ph-grid">';
+    words.forEach(function(w, i){
+      var key = 'p:' + p + ':' + i;
+      html += '<div class="ph-word">' +
+        '<div class="ph-text">' + hlHTML(w, p) + '</div>' +
+        '<div class="ph-tools">' +
+          '<button class="tbtn" data-act="say" data-word="' + esc(w) + '" data-rate="1" aria-label="' + esc(w) + ' 보통 속도로 듣기">🔊</button>' +
+          '<button class="tbtn" data-act="say" data-word="' + esc(w) + '" data-rate="0.7" aria-label="' + esc(w) + ' 천천히 듣기">🐢</button>' +
+          '<button class="tbtn mic" data-act="mic" data-word="' + esc(w) + '" data-mic="' + esc(key) + '" aria-label="' + esc(w) + ' 따라 읽고 발음 확인">🎤</button>' +
+        '</div>' +
+        '<p class="fb" data-fb="' + esc(key) + '"></p>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="addword">' +
+      '<input class="inp" id="set-add" maxlength="30" placeholder="이 세트에 단어 추가 (예: shed)" aria-label="이 세트에 단어 추가">' +
+      '<button class="btn mint" data-act="set-add" data-pattern="' + esc(p) + '">추가</button>' +
+    '</div>' +
+    '<p class="hintline">🔊 보통 속도 · 🐢 천천히 · 🎤 마이크를 누르고 단어를 읽으면 발음을 확인해 줘요.<br>' +
+    '분홍색으로 표시된 부분이 <b>' + esc(p) + '</b> 소리예요.</p>' +
+    '</article>';
+
+  host.innerHTML = html;
+}
+
+function renderAll(){
+  renderTabs();
+  renderWordList();
+  renderQuickChips();
+  renderSetArea();
+  var no = $('sr-notice');
+  if(no){
+    if(recSupported){
+      no.hidden = true;
+      no.textContent = '';
+    } else {
+      no.hidden = false;
+      no.className = 'detect';
+      no.innerHTML = '🎤 이 브라우저는 음성 인식(따라 읽기)을 지원하지 않아요. <b>듣기</b>로 소리를 익히고, 발음 확인은 <b>크롬</b>이나 <b>사파리</b>에서 열면 사용할 수 있어요.';
+    }
+  }
+}
+
+/* ------------------------- 7. 동작 ------------------------- */
+function addWord(){
+  var wIn = $('w-word'), mIn = $('w-mean');
+  var raw = wIn ? wIn.value : '';
+  var word = String(raw).replace(/[^A-Za-z' -]/g, '').replace(/\s+/g, ' ').trim();
+  if(!word){
+    toast('영어 단어를 먼저 적어 주세요');
+    if(wIn) wIn.focus();
+    return;
+  }
+  db.words.push({
+    id: uid(),
+    word: word.slice(0,30),
+    meaning: mIn ? String(mIn.value || '').trim().slice(0,40) : '',
+    learned: false,
+    at: new Date().toISOString()
+  });
+  saveDB();
+  if(wIn) wIn.value = '';
+  if(mIn) mIn.value = '';
+  renderWordList();
+  toast('"' + word + '" 단어장에 담았어요 📖');
+  if(wIn) wIn.focus();
+  if(!storageOk) toast('이 브라우저에서는 저장이 막혀 있어요');
+}
+
+function openSet(){
+  var wIn = $('p-word'), pIn = $('p-pattern');
+  var typedPattern = pIn ? String(pIn.value || '').toLowerCase().replace(/[^a-z_]/g, '').trim() : '';
+  var word = wIn ? String(wIn.value || '').replace(/[^A-Za-z' -]/g, '').replace(/\s+/g, ' ').trim() : '';
+
+  var pattern = typedPattern;
+  if(!pattern && word) pattern = detectPattern(word);
+  if(!pattern){
+    toast(word ? '이 단어에서 익숙한 파닉스를 찾지 못했어요. 파닉스를 직접 적어 주세요' : '단어나 파닉스를 하나는 넣어 주세요');
+    return;
+  }
+  db.pattern = pattern.slice(0,6);
+  if(word) addWordToSet(db.pattern, word, true);
+  saveDB();
+  renderQuickChips();
+  renderSetArea();
+  var area = $('set-area');
+  if(area && area.scrollIntoView){ try { area.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){ /* 무시 */ } }
+  toast((word ? '"' + word + '" ' : '') + db.pattern + ' 세트로 연습해요 🔤');
+}
+
+function updateDetect(){
+  var wIn = $('p-word'), pIn = $('p-pattern'), out = $('p-detect');
+  if(!out) return;
+  var word = wIn ? String(wIn.value || '').trim() : '';
+  var typed = pIn ? String(pIn.value || '').toLowerCase().replace(/[^a-z_]/g, '').trim() : '';
+  if(!word){
+    out.innerHTML = '';
+    return;
+  }
+  var found = detectPattern(word);
+  if(typed){
+    out.innerHTML = '이 단어를 <b>' + esc(typed) + '</b> 세트에 넣어요.';
+  } else if(found){
+    out.innerHTML = '"' + esc(word) + '" 에는 <b>' + esc(found) + '</b> 소리가 들어 있어요' +
+      (PHONICS_HINT[found] ? ' (' + esc(PHONICS_HINT[found]) + ')' : '') + ' — 이걸로 연습할게요.';
+  } else {
+    out.innerHTML = '"' + esc(word) + '" 에서 익숙한 파닉스를 찾지 못했어요. 파닉스를 직접 적어 주세요.';
+  }
+}
+
+/* ------------------------- 8. 이벤트 ------------------------- */
+function findActTarget(el){
+  var node = el;
+  while(node && node !== document.body){
+    if(node.getAttribute && node.getAttribute('data-act')) return node;
+    node = node.parentNode;
+  }
+  return null;
+}
+
+document.addEventListener('click', function(e){
+  var tabBtn = e.target.closest ? e.target.closest('[data-tab]') : null;
+  if(tabBtn){
+    db.tab = tabBtn.getAttribute('data-tab') === 'phonics' ? 'phonics' : 'words';
+    saveDB();
+    renderTabs();
+    return;
+  }
+
+  var t = findActTarget(e.target);
+  if(!t) return;
+  var act = t.getAttribute('data-act');
+
+  if(act === 'word-add'){ addWord(); return; }
+
+  if(act === 'say'){
+    var word = t.getAttribute('data-word') || '';
+    var rate = t.getAttribute('data-rate') === '0.7' ? 0.7 : 1.0;
+    speak(word, rate);
+    return;
+  }
+
+  if(act === 'mic'){
+    var mWord = t.getAttribute('data-word') || '';
+    var mKey = t.getAttribute('data-mic') || '';
+    if(!recSupported){
+      setFb(mKey, 'info', '이 브라우저에서는 음성 인식을 지원하지 않아요. 🔊 버튼으로 소리를 먼저 들어 보세요.');
+      toast('음성 인식은 크롬·사파리에서 사용할 수 있어요');
+      return;
+    }
+    listenFor(mWord, mKey);
+    return;
+  }
+
+  if(act === 'learn'){
+    var id = t.getAttribute('data-id');
+    db.words.forEach(function(w){ if(w.id === id) w.learned = !w.learned; });
+    saveDB();
+    renderWordList();
+    return;
+  }
+
+  if(act === 'word-del'){
+    var did = t.getAttribute('data-id');
+    var target = null;
+    db.words.forEach(function(w){ if(w.id === did) target = w; });
+    if(!target) return;
+    var okDel = window.confirm('"' + target.word + '" 단어를 지울까요?');
+    if(!okDel) return;
+    db.words = db.words.filter(function(w){ return w.id !== did; });
+    saveDB();
+    renderWordList();
+    toast('단어를 지웠어요');
+    return;
+  }
+
+  if(act === 'set-make'){ openSet(); return; }
+
+  if(act === 'set-pick'){
+    db.pattern = t.getAttribute('data-pattern') || 'sh';
+    saveDB();
+    renderQuickChips();
+    renderSetArea();
+    return;
+  }
+
+  if(act === 'set-add'){
+    var p = t.getAttribute('data-pattern') || db.pattern;
+    var input = $('set-add');
+    var typed = input ? input.value : '';
+    if(addWordToSet(p, typed)){
+      if(input) input.value = '';
+      renderSetArea();
+      toast(p + ' 세트에 단어를 넣었어요');
+    }
+    return;
+  }
+});
+
+document.addEventListener('input', function(e){
+  if(e.target && (e.target.id === 'p-word' || e.target.id === 'p-pattern')) updateDetect();
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  var el = e.target;
+  if(!el || !el.id) return;
+  if(el.id === 'w-word' || el.id === 'w-mean'){
+    e.preventDefault();
+    addWord();
+  } else if(el.id === 'p-word' || el.id === 'p-pattern'){
+    e.preventDefault();
+    openSet();
+  } else if(el.id === 'set-add'){
+    e.preventDefault();
+    var p = db.pattern;
+    if(addWordToSet(p, el.value)){
+      el.value = '';
+      renderSetArea();
+      toast(p + ' 세트에 단어를 넣었어요');
+    }
+  }
+});
+
+/* ------------------------- 9. 시작 ------------------------- */
+loadDB();
+if(!db.pattern) db.pattern = 'sh';
+renderAll();
+updateDetect();
+if(!storageOk){
+  var no = $('sr-notice');
+  if(no){
+    no.hidden = false;
+    no.className = 'detect';
+    no.innerHTML = '저장이 막혀 있어 새로 고치면 단어장이 사라져요. 브라우저 설정에서 저장을 허용해 주세요.';
+  }
+}
+</script>
+</body>
+</html>
