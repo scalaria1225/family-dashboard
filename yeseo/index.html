@@ -416,7 +416,7 @@ a{color:inherit;text-decoration:none;}
     <div id="set-area"></div>
   </section>
 
-  <p class="foot">우리 가족만 보는 페이지예요. 검색에는 나오지 않아요. · 저장은 이 기기의 브라우저에만 돼요.</p>
+  <p class="foot">우리 가족만 보는 페이지예요. 검색에는 나오지 않아요. · 이 기기에도 저장되고, 가족 폰과 실시간으로 함께 맞춰져요.</p>
 </main>
 
 <div class="toasts" id="toasts" aria-live="polite"></div>
@@ -1510,7 +1510,7 @@ function updateSyncBadge(s){
 function startYeseoSync(){
   if(typeof CloudSync === 'undefined'){ updateSyncBadge({ status: 'offline' }); return; }
   yeseoSync = CloudSync.create({
-    row: 'sync-test-yeseo',
+    row: 'yeseo',
     hadLocal: hadLocalDB,
     getState: function(){ return db; },
     applyState: function(data){ applyRemoteDB(data); },

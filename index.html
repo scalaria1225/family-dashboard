@@ -990,7 +990,7 @@ function updateSyncBadge(s) {
 function startFamilySync() {
   if (typeof CloudSync === 'undefined') { updateSyncBadge({ status: 'offline' }); return; }
   familySync = CloudSync.create({
-    row: 'sync-test-main',
+    row: 'main',
     hadLocal: Store.hadSaved,
     getState: function () { return Store.state; },
     applyState: function (data) { Store.applyRemote(data); },
