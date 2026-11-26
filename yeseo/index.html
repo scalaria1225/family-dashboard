@@ -101,6 +101,12 @@ a{color:inherit;text-decoration:none;}
   box-shadow:0 4px 12px rgba(226,140,175,.26);
 }
 .tab.on .ico,.tab .ico{font-size:15px;}
+.lb-short{display:none;}
+@media (max-width:430px){
+  .lb-long{display:none;}
+  .lb-short{display:inline;}
+  .tab{font-size:12.5px;padding:11px 6px;}
+}
 
 .card{
   background:var(--card);border:1px solid var(--line);border-radius:var(--r);
@@ -324,10 +330,10 @@ a{color:inherit;text-decoration:none;}
 
   <nav class="tabs" role="tablist" aria-label="예서 스터디 메뉴">
     <button class="tab" role="tab" id="tab-words" data-tab="words" aria-controls="panel-words" aria-selected="true">
-      <span class="ico" aria-hidden="true">📖</span> 모르는 단어 &amp; 발음 확인
+      <span class="ico" aria-hidden="true">📖</span> <span class="lb-long">모르는 단어 &amp; 발음 확인</span><span class="lb-short">단어 발음</span>
     </button>
     <button class="tab" role="tab" id="tab-phonics" data-tab="phonics" aria-controls="panel-phonics" aria-selected="false">
-      <span class="ico" aria-hidden="true">🔤</span> 파닉스 연습
+      <span class="ico" aria-hidden="true">🔤</span> <span class="lb-long">파닉스 연습</span><span class="lb-short">파닉스</span>
     </button>
   </nav>
 
