@@ -770,8 +770,11 @@ function fmtAmpm(iso) {
    (넓은 화면에서는 두 칸씩: 첫 줄 예현·예서, 아랫줄 엄마·아빠) */
 var MEMBERS = [
   { id: 'yehyun', name: '예현', sub: '초4', emoji: '🐶', tint: '#FFE9BE', soft: '#FFF4DC', deep: '#DBA044',
-    /* 이번주 중요한 일 머리말의 알림장 바로가기 */
-    notice: { emoji: '🔔', label: '하이클래스', href: 'https://www.hiclass.net/' } },
+    /* 이번주 중요한 일 머리말의 알림장 바로가기
+       아이폰에서 사파리가 아니라 '하이클래스 앱'으로 열리도록 앱이 등록한 Universal Link 경로를 씁니다.
+       (hiclass.net AASA: /sru/*, /m/* 만 앱으로 연결. 루트 '/'·/main/* 는 웹으로만 열립니다.)
+       같은 탭으로 이동해야 iOS가 앱으로 넘겨 줍니다(target="_blank" 새 탭에서는 웹으로만 열림). */
+    notice: { emoji: '🔔', label: '하이클래스', href: 'https://www.hiclass.net/m/' } },
   { id: 'yeseo',  name: '예서', sub: '초1', emoji: '🐰', tint: '#FFDDE8', soft: '#FFEDF4', deep: '#E4789F',
     notice: { emoji: '🔔', label: '학교종이', href: 'https://schoolbell-e.com/ko/main/group/360682/boards/classnews' } },
   { id: 'mom',    name: '엄마', sub: '',    emoji: '🐻', tint: '#DFF1E3', soft: '#EFF9F2', deep: '#5FAE80' },
@@ -1406,8 +1409,10 @@ function renderWeeklyImportant() {
       '<span class="week-avatar" aria-hidden="true">' + m.emoji + '</span>' +
       '<span class="week-name">' + esc(m.name) + (m.sub ? ' <i>' + m.sub + '</i>' : '') + '</span>' +
       (m.notice ?
-        '<a class="week-notice" href="' + esc(m.notice.href) + '" target="_blank" rel="noopener noreferrer"' +
-        ' aria-label="' + esc(m.name) + ' ' + esc(m.notice.label) + ' 알림장 새 창으로 열기">' +
+        /* 새 탭(target=_blank)이면 아이폰 사파리가 앱으로 넘기지 않고 웹으로만 엽니다.
+           같은 탭 이동으로 두어 앱이 열리면 앱으로, 앱이 없으면 웹 알림장으로 열리게 합니다. */
+        '<a class="week-notice" href="' + esc(m.notice.href) + '"' +
+        ' aria-label="' + esc(m.name) + ' ' + esc(m.notice.label) + ' 알림장 열기">' +
         '<span aria-hidden="true">' + m.notice.emoji + '</span> ' + esc(m.notice.label) +
         '<span class="week-notice-arrow" aria-hidden="true">↗</span></a>' : '') +
       '<span class="week-count">' + (list.length ? doneCount + '/' + list.length + ' 완료' : '아직 없음') + '</span>' +
