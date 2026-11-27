@@ -226,7 +226,7 @@ async function encodeWithWebCodecs(api, ui, total) {
   if (ui.cancelled()) return { cancelled: true };
 
   ui.progress(0.98, '파일 정리 중…');
-  const build = (withAudio, kind) => {
+  const build = (withAudio, kind, chunks) => {
     const opts = {
       target: new ArrayBufferTarget(),
       fastStart: 'in-memory',
@@ -235,7 +235,7 @@ async function encodeWithWebCodecs(api, ui, total) {
     if (withAudio) opts.audio = { codec: kind === 'opus' ? 'opus' : 'aac', numberOfChannels: 2, sampleRate: 48000 };
     const m = new Muxer(opts);
     for (const { chunk, meta } of videoChunks) m.addVideoChunk(chunk, meta);
-    if (withAudio) for (const { chunk, meta } of audioChunks) m.addAudioChunk(chunk, meta);
+    if (withAudio) for (const { chunk, meta } of chunks) m.addAudioChunk(chunk, meta);
     m.finalize();
     return new Blob([m.target.buffer], { type: 'video/mp4' });
   };
@@ -246,7 +246,7 @@ async function encodeWithWebCodecs(api, ui, total) {
         const chunks = await encodeAudioChunks(mix, codec);
         if (!chunks.length) { note(kind + ' produced no chunks'); continue; }
         try {
-          const blob = build(true, kind);
+          const blob = build(true, kind, chunks);
           return { blob, hasAudio: true, audioCodec: kind };
         } catch (e) { note('mux ' + kind + ' error: ' + e.message); }
       } catch (e) { note(kind + ' audio error: ' + e.message); }
