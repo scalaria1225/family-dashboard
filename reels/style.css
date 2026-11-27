@@ -102,8 +102,9 @@ em{font-style:normal}
 .ov{
   position:absolute; left:50%; top:50%;
   transform:translate(-50%,-50%);
+  width:max-content; max-width:88%;
   white-space:pre-wrap; text-align:center; line-height:1.24;
-  cursor:grab; touch-action:none; max-width:88%;
+  cursor:grab; touch-action:none;
   will-change:transform;
 }
 .ov.selected{outline:0}

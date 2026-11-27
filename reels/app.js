@@ -28,7 +28,7 @@ const PRESETS = {
 const STICKERS = ['✨','💕','❤️','🎀','🌸','🎵','🎶','⭐','🌟','🐻','🐰','🍓','🍒','☁️','🌷','📷','🎬','🫧','💫','🦋','🍰','🧸','💌','🎈'];
 
 const DEFAULT_STYLE = {
-  font: 'ssuround', size: 34, preset: 'stroke',
+  font: 'ssuround', size: 31, preset: 'stroke',
   color: '#FFFFFF', stroke: '#2B1D16', strokeW: 3, bg: '#3E2B21', bold: true,
 };
 
@@ -1497,7 +1497,7 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js?v=7');
+    const mod = await import('./export.js?v=8');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
