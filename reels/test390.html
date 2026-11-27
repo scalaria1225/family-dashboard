@@ -14,7 +14,7 @@
 </head>
 <body>
 <div id="wrap">
-  <iframe id="fr" src="./index.html"></iframe>
+  <iframe id="fr" src="./index.html?cb="></iframe>
   <div id="log">log</div>
 </div>
 <script>
@@ -26,6 +26,7 @@ function log(msg, kind) {
 }
 window.__log = log;
 const fr = document.getElementById('fr');
+fr.src = './index.html?cb=' + Date.now();
 fr.addEventListener('load', () => {
   const w = fr.contentWindow;
   w.addEventListener('error', e => log(e.message + ' @' + (e.filename||'').split('/').pop() + ':' + e.lineno, 'ERR'));
