@@ -8,7 +8,7 @@ const FPS = 30;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const dbg = [];
-const note = (m) => { dbg.push(m); if (typeof window !== 'undefined') window.__reelsExportDebug = dbg; };
+const note = (m) => { dbg.push(m); try { document.documentElement.setAttribute('data-export-debug', dbg.join(' | ')); } catch (e) {} };
 
 const MP4_TYPES = [
   'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
