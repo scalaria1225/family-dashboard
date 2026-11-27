@@ -215,30 +215,24 @@ async function encodeWithWebCodecs(api, ui, total) {
   if (ui.cancelled()) return { cancelled: true };
 
   // audio: render the mix, then encode it separately so a failure never loses the video
-  let audioChunks = [];
+  let mix = null;
   if (window.AudioEncoder && window.AudioData) {
     ui.progress(0.92, '오디오 준비 중…');
-    let mix = null;
     try { mix = await api.renderAudioMix(total); } catch (e) { mix = null; note('mix error: ' + e.message); }
     note('mix ' + (mix ? mix.length + ' @' + mix.sampleRate : 'none'));
-    if (mix) {
-      try { audioChunks = await encodeAudioChunks(mix); }
-      catch (e) { console.warn('audio encode skipped', e); audioChunks = []; note('audio encode error: ' + e.message); }
-    }
   } else {
     note('no AudioEncoder');
   }
-  note('audio chunks ' + audioChunks.length);
   if (ui.cancelled()) return { cancelled: true };
 
   ui.progress(0.98, '파일 정리 중…');
-  const build = (withAudio) => {
+  const build = (withAudio, kind) => {
     const opts = {
       target: new ArrayBufferTarget(),
       fastStart: 'in-memory',
       video: { codec: 'avc', width: W, height: H, frameRate: FPS },
     };
-    if (withAudio) opts.audio = { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 };
+    if (withAudio) opts.audio = { codec: kind === 'opus' ? 'opus' : 'aac', numberOfChannels: 2, sampleRate: 48000 };
     const m = new Muxer(opts);
     for (const { chunk, meta } of videoChunks) m.addVideoChunk(chunk, meta);
     if (withAudio) for (const { chunk, meta } of audioChunks) m.addAudioChunk(chunk, meta);
@@ -246,22 +240,30 @@ async function encodeWithWebCodecs(api, ui, total) {
     return new Blob([m.target.buffer], { type: 'video/mp4' });
   };
 
-  if (audioChunks.length) {
-    try { return { blob: build(true), hasAudio: true }; }
-    catch (e) { console.warn('mp4 with audio failed, retrying silent', e); note('mux audio error: ' + e.message); }
+  if (mix) {
+    for (const [kind, codec] of [['aac', 'mp4a.40.2'], ['opus', 'opus']]) {
+      try {
+        const chunks = await encodeAudioChunks(mix, codec);
+        if (!chunks.length) { note(kind + ' produced no chunks'); continue; }
+        try {
+          const blob = build(true, kind);
+          return { blob, hasAudio: true, audioCodec: kind };
+        } catch (e) { note('mux ' + kind + ' error: ' + e.message); }
+      } catch (e) { note(kind + ' audio error: ' + e.message); }
+    }
   }
   note('video only');
-  return { blob: build(false), hasAudio: false };
+  return { blob: build(false), hasAudio: false, audioCodec: null };
 }
 
-async function encodeAudioChunks(mix) {
+async function encodeAudioChunks(mix, codec) {
   const out = [];
   let err = null;
   const enc = new AudioEncoder({
     output: (chunk, meta) => { out.push({ chunk, meta }); },
     error: (e) => { err = e; },
   });
-  enc.configure({ codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 128_000 });
+  enc.configure({ codec, sampleRate: 48000, numberOfChannels: 2, bitrate: 128_000 });
   const ch0 = mix.getChannelData(0);
   const ch1 = mix.numberOfChannels > 1 ? mix.getChannelData(1) : ch0;
   const block = 4800;

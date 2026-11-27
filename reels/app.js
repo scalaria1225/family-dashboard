@@ -1497,7 +1497,7 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js?v=5');
+    const mod = await import('./export.js?v=6');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
