@@ -7,6 +7,9 @@ const FPS = 30;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+const dbg = [];
+const note = (m) => { dbg.push(m); if (typeof window !== 'undefined') window.__reelsExportDebug = dbg; };
+
 const MP4_TYPES = [
   'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
   'video/mp4;codecs=avc1.4d002a,mp4a.40.2',
@@ -216,12 +219,16 @@ async function encodeWithWebCodecs(api, ui, total) {
   if (window.AudioEncoder && window.AudioData) {
     ui.progress(0.92, '오디오 준비 중…');
     let mix = null;
-    try { mix = await api.renderAudioMix(total); } catch (e) { mix = null; }
+    try { mix = await api.renderAudioMix(total); } catch (e) { mix = null; note('mix error: ' + e.message); }
+    note('mix ' + (mix ? mix.length + ' @' + mix.sampleRate : 'none'));
     if (mix) {
       try { audioChunks = await encodeAudioChunks(mix); }
-      catch (e) { console.warn('audio encode skipped', e); audioChunks = []; }
+      catch (e) { console.warn('audio encode skipped', e); audioChunks = []; note('audio encode error: ' + e.message); }
     }
+  } else {
+    note('no AudioEncoder');
   }
+  note('audio chunks ' + audioChunks.length);
   if (ui.cancelled()) return { cancelled: true };
 
   ui.progress(0.98, '파일 정리 중…');
@@ -241,8 +248,9 @@ async function encodeWithWebCodecs(api, ui, total) {
 
   if (audioChunks.length) {
     try { return { blob: build(true), hasAudio: true }; }
-    catch (e) { console.warn('mp4 with audio failed, retrying silent', e); }
+    catch (e) { console.warn('mp4 with audio failed, retrying silent', e); note('mux audio error: ' + e.message); }
   }
+  note('video only');
   return { blob: build(false), hasAudio: false };
 }
 
