@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F0E4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>한나 릴스 스튜디오</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Do+Hyeon&family=Black+Han+Sans&family=Nanum+Pen+Script&family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  @font-face { font-family:'Cafe24Ssurround'; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff'); font-display:swap; }
+  @font-face { font-family:'CookieRun'; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.0/CookieRun-Regular.woff') format('woff'); font-display:swap; }
+  @font-face { font-family:'PyeongChangPeace'; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2'); font-weight:700; font-display:swap; }
+</style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-ico">🎬</span>
+      <div class="brand-txt">
+        <h1>한나 릴스 스튜디오</h1>
+        <p class="save-state" id="saveState"><i class="dot"></i><span>자동 저장됨</span></p>
+      </div>
+    </div>
+    <button class="btn-add" id="addMediaBtn">+ 사진·영상</button>
+    <input type="file" id="fileInput" accept="image/*,video/*" multiple hidden>
+    <input type="file" id="bgmInput" accept="audio/*" hidden>
+  </header>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <div class="bg-layer" id="bgLayer"></div>
+      <div class="media-layer" id="mediaLayer"></div>
+      <div class="overlay-layer" id="overlayLayer"></div>
+      <div class="stage-empty" id="stageEmpty">
+        <span class="se-ico">🖼️</span>
+        <p>사진·영상을 추가해 보세요</p>
+        <small>9:16 릴스로 자동 맞춤</small>
+      </div>
+      <div class="sel-frame" id="selFrame" hidden><button class="sel-x" id="selX" aria-label="삭제">×</button></div>
+    </div>
+  </div>
+
+  <div class="playbar">
+    <button class="play-btn" id="playBtn" aria-label="재생">▶</button>
+    <span class="timecode"><b id="curTime">0.0</b><span class="tc-sep"> / </span><span id="totalTime">0.0</span>s</span>
+    <button class="btn-export" id="exportBtn">MP4 저장</button>
+  </div>
+
+  <div class="clipbar" id="clipBar">
+    <div class="cb-main">
+      <div class="cb-info">
+        <span class="cb-idx" id="cbIdx">컷 없음</span>
+        <span class="cb-type" id="cbType">사진이나 영상을 추가해 주세요</span>
+      </div>
+      <div class="cb-btns">
+        <button class="cb-btn" data-act="left" title="앞으로">◀ 앞</button>
+        <button class="cb-btn" data-act="right" title="뒤로">▶ 뒤</button>
+        <button class="cb-btn" data-act="durMinus" title="짧게">－</button>
+        <button class="cb-btn" data-act="durPlus" title="길게">＋</button>
+        <button class="cb-btn danger" data-act="del" title="클립 삭제">🗑</button>
+      </div>
+    </div>
+    <div class="cb-trim" id="cbTrim" hidden>
+      <label class="trim-field"><span>시작 <em id="trimStartV">0.0s</em></span>
+        <input type="range" id="trimStart" min="0" max="10" step="0.1"></label>
+      <label class="trim-field"><span>끝 <em id="trimEndV">0.0s</em></span>
+        <input type="range" id="trimEnd" min="0" max="10" step="0.1"></label>
+      <div class="trim-speed">
+        <span>배속</span>
+        <div class="seg tiny" id="speedSeg">
+          <button data-speed="0.5">0.5</button><button data-speed="1">1</button><button data-speed="1.5">1.5</button><button data-speed="2">2</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="timeline">
+    <div class="tl-head">
+      <span class="tl-title">타임라인</span>
+      <div class="tl-actions">
+        <button class="mini" id="tlAddSub">+ 자막</button>
+        <button class="mini" id="tlAddSticker">+ 스티커</button>
+      </div>
+    </div>
+    <div class="tl-body" id="tlBody">
+      <div class="ruler" id="ruler"></div>
+      <div class="track track-clips" id="trackClips"></div>
+      <div class="track track-subs" id="trackSubs"></div>
+      <div class="track track-stk" id="trackStickers"></div>
+      <div class="playhead" id="playhead"><i class="ph-knob"></i></div>
+    </div>
+  </section>
+
+  <nav class="tabs" id="tabBar">
+    <button class="tab active" data-tab="clip"><i>💬</i><span>구간·자막</span></button>
+    <button class="tab" data-tab="sticker"><i>🌸</i><span>스티커</span></button>
+    <button class="tab" data-tab="font"><i>Aa</i><span>폰트</span></button>
+    <button class="tab" data-tab="design"><i>🎨</i><span>디자인</span></button>
+    <button class="tab" data-tab="media"><i>🎵</i><span>미디어·BGM</span></button>
+  </nav>
+
+  <section class="panel" id="panel">
+
+    <div class="panel-page" data-page="clip">
+      <div class="p-head">
+        <span>자막 편집</span>
+        <div class="p-head-actions">
+          <button class="mini" id="addSubBtn">+ 자막 추가</button>
+          <button class="mini ghost" id="delSubBtn">삭제</button>
+        </div>
+      </div>
+      <div id="subBody">
+        <textarea id="subText" rows="2" placeholder="자막을 입력하세요 (줄바꿈 가능)"></textarea>
+        <div class="row">
+          <label class="field">시작<input type="number" id="subStart" step="0.1" min="0" inputmode="decimal"></label>
+          <label class="field">끝<input type="number" id="subEnd" step="0.1" min="0" inputmode="decimal"></label>
+          <div class="field anim-field">등장
+            <div class="seg" id="animSeg">
+              <button data-anim="none">없음</button><button data-anim="fade">페이드</button><button data-anim="pop">팝</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="subEmpty" class="hint">타임라인의 자막 블록을 누르거나 <b>+ 자막 추가</b>로 시작해요.</div>
+    </div>
+
+    <div class="panel-page" data-page="sticker" hidden>
+      <div class="p-head">
+        <span>스티커</span>
+        <button class="mini" id="addStickerBtn">+ 지금 위치에 추가</button>
+      </div>
+      <div class="sticker-grid" id="stickerGrid"></div>
+      <div class="slider-row"><span>크기</span><input type="range" id="stickerSize" min="24" max="200" step="2" value="90"><em id="stickerSizeV">90</em></div>
+      <div class="slider-row"><span>회전</span><input type="range" id="stickerRot" min="-180" max="180" step="5" value="0"><em id="stickerRotV">0°</em></div>
+    </div>
+
+    <div class="panel-page" data-page="font" hidden>
+      <div class="p-head"><span>폰트</span><span class="p-note" id="fontTarget">새 자막 기본값</span></div>
+      <div class="font-list" id="fontList"></div>
+      <div class="slider-row"><span>글자 크기</span><input type="range" id="fontSize" min="16" max="80" step="1" value="34"><em id="fontSizeV">34</em></div>
+    </div>
+
+    <div class="panel-page" data-page="design" hidden>
+      <div class="p-head"><span>디자인</span><span class="p-note">자막 스타일 프리셋</span></div>
+      <div class="preset-row" id="presetRow"></div>
+      <div class="color-row">
+        <label class="color-field"><span>글자색</span><input type="color" id="colorText" value="#FFFFFF"></label>
+        <label class="color-field"><span>테두리</span><input type="color" id="colorStroke" value="#2B1D16"></label>
+        <label class="color-field"><span>배경</span><input type="color" id="colorBg" value="#3E2B21"></label>
+      </div>
+    </div>
+
+    <div class="panel-page" data-page="media" hidden>
+      <div class="p-head">
+        <span>미디어 · BGM</span>
+        <button class="mini" id="addBgmBtn">BGM 선택</button>
+      </div>
+      <div class="bgm-line">
+        <span class="bgm-name" id="bgmName">BGM 없음</span>
+        <button class="mini ghost" id="bgmClearBtn">해제</button>
+      </div>
+      <div class="slider-row"><span>원본 음량</span><input type="range" id="origVol" min="0" max="100" value="100"><em id="origVolV">100</em></div>
+      <div class="slider-row"><span>BGM 음량</span><input type="range" id="bgmVol" min="0" max="100" value="35"><em id="bgmVolV">35</em></div>
+      <div class="seg-row">
+        <span class="seg-label">화면 비율</span>
+        <div class="seg" id="fillSeg">
+          <button data-fill="cover">채우기</button><button data-fill="contain">맞추기</button>
+        </div>
+        <span class="p-note" id="fillNote">여백은 블러로 채워요</span>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<div class="modal" id="exportModal" hidden>
+  <div class="modal-card">
+    <h2 id="exTitle">MP4 만드는 중…</h2>
+    <div class="progress"><div class="bar" id="exBar"></div></div>
+    <div class="ex-pct" id="exPct">0%</div>
+    <p class="ex-note" id="exNote">화면을 유지해 주세요. 릴스 길이만큼 걸려요.</p>
+    <div class="ex-actions" id="exResult" hidden>
+      <button class="btn-primary" id="exDownload">저장하기</button>
+      <button class="btn-ghost" id="exShare">공유</button>
+      <button class="btn-ghost" id="exClose">닫기</button>
+    </div>
+    <button class="btn-ghost small" id="exCancel">취소</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
