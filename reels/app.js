@@ -759,22 +759,24 @@ function renderTimeline() {
 
   const subs = $('trackSubs');
   subs.innerHTML = '';
+  const stks = $('trackStickers');
+  stks.innerHTML = '';
+  if (!state.clips.length) { updatePlayhead(); return; }
+
   for (const s of state.subtitles) {
     const block = el('div', `sub-block${state.sel.type === 'sub' && state.sel.id === s.id ? ' sel' : ''}`);
     block.style.left = `${(s.start / total) * 100}%`;
-    block.style.width = `max(6px, ${((s.end - s.start) / total) * 100}%)`;
+    block.style.width = `max(6px, ${Math.min(100, ((s.end - s.start) / total) * 100)}%)`;
     block.textContent = s.text || '자막';
     block.dataset.block = 'sub';
     block.dataset.id = s.id;
     subs.appendChild(block);
   }
 
-  const stks = $('trackStickers');
-  stks.innerHTML = '';
   for (const s of state.stickers) {
     const block = el('div', `stk-block${state.sel.type === 'stk' && state.sel.id === s.id ? ' sel' : ''}`);
     block.style.left = `${(s.start / total) * 100}%`;
-    block.style.width = `max(6px, ${((s.end - s.start) / total) * 100}%)`;
+    block.style.width = `max(6px, ${Math.min(100, ((s.end - s.start) / total) * 100)}%)`;
     block.textContent = s.emoji;
     block.dataset.block = 'stk';
     block.dataset.id = s.id;
@@ -1507,7 +1509,7 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js?v=9');
+    const mod = await import('./export.js?v=10');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
