@@ -73,7 +73,7 @@ em{font-style:normal}
 
 /* ---------- stage ---------- */
 .stage-wrap{
-  flex:1 1 auto; min-height:150px; display:flex; align-items:center; justify-content:center;
+  flex:1 1 0; min-height:150px; display:flex; align-items:center; justify-content:center;
   padding:2px 0; overflow:hidden;
 }
 .stage{
@@ -277,7 +277,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:2px solid var(
 
 /* ---------- panel ---------- */
 .panel{
-  flex:1 1 150px; min-height:108px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  flex:0 0 150px; min-height:100px; overflow-y:auto; -webkit-overflow-scrolling:touch;
   background:var(--card); border:1px solid var(--line); border-radius:14px;
   padding:7px 10px; box-shadow:var(--shadow);
 }
@@ -398,7 +398,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:2px solid var(
   .stage-wrap{min-height:120px}
   .track-clips{height:26px}
   .track-subs,.track-stk{height:12px}
-  .panel{flex-basis:130px;min-height:96px}
+  .panel{flex-basis:132px;min-height:96px}
   .timeline{padding:4px 8px 6px}
 }
 @media (min-width:560px){

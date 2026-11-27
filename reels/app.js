@@ -1507,7 +1507,7 @@ async function startExport() {
     if (exportCancel) { $('exportModal').hidden = true; return; }
     console.error(e);
     $('exTitle').textContent = '저장하지 못했어요';
-    $('exNote').textContent = (e && e.message ? e.message : '알 수 없는 오류') + ' — Safari에서 다시 시도해 주세요.';
+    $('exNote').textContent = (e && e.message ? e.message : '알 수 없는 오류') + ' — 다시 한 번 시도하고, 계속 막히면 아이폰 Safari에서 저장해 주세요.';
     $('exPct').textContent = '';
     $('exResult').hidden = true;
     $('exCancel').hidden = false;

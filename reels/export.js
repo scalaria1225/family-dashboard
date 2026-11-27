@@ -37,26 +37,51 @@ export async function exportMovie(api, ui) {
   if (ui.cancelled()) return { cancelled: true };
 
   const mp4 = pickMp4Type();
-  if (mp4) {
-    const out = await recordRealtime(api, ui, mp4, total);
-    if (out.cancelled) return out;
-    return { blob: out.blob, ext: 'mp4', mode: 'realtime-mp4' };
-  }
+  const ua = navigator.userAgent || '';
+  const isWebKit = /AppleWebKit/.test(ua) && !/(Chrome|Chromium|Edg|OPR)\//.test(ua);
+  const hasWebCodecs = !!(window.VideoEncoder && window.VideoFrame);
+  const notes = [];
 
-  if (window.VideoEncoder && window.VideoFrame) {
+  const attemptRealtime = async (mime, mode) => {
+    try {
+      const out = await recordRealtime(api, ui, mime, total);
+      if (out.cancelled) return { cancelled: true };
+      if (out.blob && out.blob.size > 1200) return { blob: out.blob, ext: mime.startsWith('video/mp4') ? 'mp4' : 'webm', mode };
+      notes.push(mime.split(';')[0] + ' 결과가 비었어요');
+    } catch (e) {
+      notes.push((e && e.message) || '녹화 실패');
+    }
+    try { api.pause(); } catch (e) {}
+    return null;
+  };
+  const attemptWebCodecs = async () => {
     try {
       const out = await encodeWithWebCodecs(api, ui, total);
-      if (out.cancelled) return out;
-      if (out.blob && out.blob.size) return { blob: out.blob, ext: 'mp4', mode: 'webcodecs' };
+      if (out.cancelled) return { cancelled: true };
+      if (out.blob && out.blob.size > 1200) return { blob: out.blob, ext: 'mp4', mode: 'webcodecs' };
+      notes.push('MP4 인코딩 결과가 비었어요');
     } catch (e) {
-      console.warn('WebCodecs export failed, falling back to MediaRecorder', e);
-      if (ui.cancelled()) return { cancelled: true };
+      notes.push((e && e.message) || 'MP4 인코딩 실패');
     }
+    try { api.pause(); } catch (e) {}
+    return null;
+  };
+
+  // order: WebKit records MP4 reliably in real time; elsewhere frame accurate encode is cleaner
+  const order = isWebKit
+    ? [mp4 ? () => attemptRealtime(mp4, 'realtime-mp4') : null, hasWebCodecs ? attemptWebCodecs : null, () => attemptRealtime('video/webm', 'webm')]
+    : [hasWebCodecs ? attemptWebCodecs : null, mp4 ? () => attemptRealtime(mp4, 'realtime-mp4') : null, () => attemptRealtime('video/webm', 'webm')];
+
+  for (const step of order) {
+    if (!step) continue;
+    if (ui.cancelled()) return { cancelled: true };
+    const result = await step();
+    if (!result) continue;
+    if (result.cancelled) return result;
+    return result;
   }
 
-  const out = await recordRealtime(api, ui, 'video/webm', total);
-  if (out.cancelled) return out;
-  return { blob: out.blob, ext: 'webm', mode: 'webm' };
+  throw new Error('영상을 만들지 못했어요. ' + notes.slice(0, 2).join(' · '));
 }
 
 /* ------------------------------------------------------------------ */
@@ -87,11 +112,13 @@ async function recordRealtime(api, ui, mime, total) {
   }
 
   const chunks = [];
+  let recError = null;
   rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
   const stopped = new Promise((resolve, reject) => {
     rec.onstop = () => resolve();
-    rec.onerror = (e) => reject((e && e.error) || new Error('녹화 오류'));
+    rec.onerror = (e) => { recError = (e && e.error) || new Error('녹화 오류'); reject(recError); };
   });
+  stopped.catch(() => {});
 
   rec.start(200);
   await sleep(180);
@@ -106,6 +133,7 @@ async function recordRealtime(api, ui, mime, total) {
       try { api.drawFrame(ctx, t, W, H); } catch (e) { /* keep recording */ }
       ui.progress(Math.min(0.98, t / total), `녹화 중 ${t.toFixed(1)} / ${total.toFixed(1)}초`);
       if (ui.cancelled()) { cancelled = true; api.pause(); resolve(); return; }
+      if (recError) { resolve(); return; }
       if (!api.state.playing) { resolve(); return; }
       requestAnimationFrame(loop);
     };
@@ -113,13 +141,14 @@ async function recordRealtime(api, ui, mime, total) {
   });
 
   api.drawFrame(ctx, total, W, H);
-  await sleep(260);
+  await sleep(recError ? 60 : 260);
   try { rec.stop(); } catch (e) {}
-  try { await stopped; } catch (e) { console.warn(e); }
+  try { await stopped; } catch (e) { /* reported through recError */ }
   stream.getTracks().forEach((t) => { try { t.stop(); } catch (e) {} });
   api.endExportAudio();
 
   if (cancelled || ui.cancelled()) return { cancelled: true };
+  if (recError) throw recError;
   const type = mime.split(';')[0] || 'video/mp4';
   return { blob: new Blob(chunks, { type }), mime };
 }
