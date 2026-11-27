@@ -46,7 +46,9 @@ export async function exportMovie(api, ui) {
     try {
       const out = await recordRealtime(api, ui, mime, total);
       if (out.cancelled) return { cancelled: true };
-      if (out.blob && out.blob.size > 1200) return { blob: out.blob, ext: mime.startsWith('video/mp4') ? 'mp4' : 'webm', mode };
+      if (out.blob && out.blob.size > 1200) {
+        return { blob: out.blob, ext: mime.startsWith('video/mp4') ? 'mp4' : 'webm', mode, hasAudio: true };
+      }
       notes.push(mime.split(';')[0] + ' 결과가 비었어요');
     } catch (e) {
       notes.push((e && e.message) || '녹화 실패');
@@ -54,11 +56,14 @@ export async function exportMovie(api, ui) {
     try { api.pause(); } catch (e) {}
     return null;
   };
+
   const attemptWebCodecs = async () => {
     try {
       const out = await encodeWithWebCodecs(api, ui, total);
       if (out.cancelled) return { cancelled: true };
-      if (out.blob && out.blob.size > 1200) return { blob: out.blob, ext: 'mp4', mode: 'webcodecs' };
+      if (out.blob && out.blob.size > 1200) {
+        return { blob: out.blob, ext: 'mp4', mode: 'webcodecs', hasAudio: !!out.hasAudio };
+      }
       notes.push('MP4 인코딩 결과가 비었어요');
     } catch (e) {
       notes.push((e && e.message) || 'MP4 인코딩 실패');
@@ -67,7 +72,7 @@ export async function exportMovie(api, ui) {
     return null;
   };
 
-  // order: WebKit records MP4 reliably in real time; elsewhere frame accurate encode is cleaner
+  // WebKit records MP4 reliably in real time; elsewhere the frame accurate encoder is cleaner.
   const order = isWebKit
     ? [mp4 ? () => attemptRealtime(mp4, 'realtime-mp4') : null, hasWebCodecs ? attemptWebCodecs : null, () => attemptRealtime('video/webm', 'webm')]
     : [hasWebCodecs ? attemptWebCodecs : null, mp4 ? () => attemptRealtime(mp4, 'realtime-mp4') : null, () => attemptRealtime('video/webm', 'webm')];
@@ -173,34 +178,18 @@ async function encodeWithWebCodecs(api, ui, total) {
   }
   if (!cfg) throw new Error('이 브라우저에서는 MP4 인코딩을 지원하지 않아요.');
 
-  ui.progress(0.01, '오디오 준비 중…');
-  let mix = null;
-  if (window.AudioEncoder && window.AudioData) {
-    try { mix = await api.renderAudioMix(total); } catch (e) { mix = null; }
-  }
-
-  const muxerOpts = {
-    target: new ArrayBufferTarget(),
-    fastStart: 'in-memory',
-    video: { codec: 'avc', width: W, height: H, frameRate: FPS },
-  };
-  if (mix) muxerOpts.audio = { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 };
-
-  let muxer;
-  try { muxer = new Muxer(muxerOpts); }
-  catch (e) { muxerOpts.audio = undefined; muxer = new Muxer(muxerOpts); }
-
-  let encodeError = null;
-  const encoder = new VideoEncoder({
-    output: (chunk, meta) => { try { muxer.addVideoChunk(chunk, meta); } catch (e) { encodeError = e; } },
-    error: (e) => { encodeError = e; },
-  });
-  encoder.configure({ ...cfg, avc: { format: 'avc' } });
-
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d', { alpha: false });
+
+  const videoChunks = [];
+  let encodeError = null;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => { videoChunks.push({ chunk, meta }); },
+    error: (e) => { encodeError = e; },
+  });
+  encoder.configure({ ...cfg, avc: { format: 'avc' } });
 
   for (let i = 0; i < frames; i++) {
     if (ui.cancelled()) { try { encoder.close(); } catch (e) {} return { cancelled: true }; }
@@ -220,39 +209,74 @@ async function encodeWithWebCodecs(api, ui, total) {
   await encoder.flush();
   try { encoder.close(); } catch (e) {}
   if (encodeError) throw encodeError;
+  if (ui.cancelled()) return { cancelled: true };
 
-  if (mix) {
-    ui.progress(0.94, '오디오 인코딩 중…');
-    const aenc = new AudioEncoder({
-      output: (chunk, meta) => { try { muxer.addAudioChunk(chunk, meta); } catch (e) { console.warn(e); } },
-      error: (e) => console.warn('audio encode error', e),
-    });
-    aenc.configure({ codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 128_000 });
-    const ch0 = mix.getChannelData(0);
-    const ch1 = mix.numberOfChannels > 1 ? mix.getChannelData(1) : ch0;
-    const block = 4800;
-    for (let off = 0; off < mix.length; off += block) {
-      const n = Math.min(block, mix.length - off);
-      const data = new Float32Array(n * 2);
-      data.set(ch0.subarray(off, off + n), 0);
-      data.set(ch1.subarray(off, off + n), n);
-      const ad = new AudioData({
-        format: 'f32-planar',
-        sampleRate: 48000,
-        numberOfFrames: n,
-        numberOfChannels: 2,
-        timestamp: Math.round((off / 48000) * 1e6),
-        data,
-      });
-      aenc.encode(ad);
-      ad.close();
-      if (aenc.encodeQueueSize > 24) await sleep(6);
+  // audio: render the mix, then encode it separately so a failure never loses the video
+  let audioChunks = [];
+  if (window.AudioEncoder && window.AudioData) {
+    ui.progress(0.92, '오디오 준비 중…');
+    let mix = null;
+    try { mix = await api.renderAudioMix(total); } catch (e) { mix = null; }
+    if (mix) {
+      try { audioChunks = await encodeAudioChunks(mix); }
+      catch (e) { console.warn('audio encode skipped', e); audioChunks = []; }
     }
-    await aenc.flush();
-    try { aenc.close(); } catch (e) {}
   }
+  if (ui.cancelled()) return { cancelled: true };
 
-  ui.progress(0.99, '파일 정리 중…');
-  muxer.finalize();
-  return { blob: new Blob([muxer.target.buffer], { type: 'video/mp4' }) };
+  ui.progress(0.98, '파일 정리 중…');
+  const build = (withAudio) => {
+    const opts = {
+      target: new ArrayBufferTarget(),
+      fastStart: 'in-memory',
+      video: { codec: 'avc', width: W, height: H, frameRate: FPS },
+    };
+    if (withAudio) opts.audio = { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 };
+    const m = new Muxer(opts);
+    for (const { chunk, meta } of videoChunks) m.addVideoChunk(chunk, meta);
+    if (withAudio) for (const { chunk, meta } of audioChunks) m.addAudioChunk(chunk, meta);
+    m.finalize();
+    return new Blob([m.target.buffer], { type: 'video/mp4' });
+  };
+
+  if (audioChunks.length) {
+    try { return { blob: build(true), hasAudio: true }; }
+    catch (e) { console.warn('mp4 with audio failed, retrying silent', e); }
+  }
+  return { blob: build(false), hasAudio: false };
+}
+
+async function encodeAudioChunks(mix) {
+  const out = [];
+  let err = null;
+  const enc = new AudioEncoder({
+    output: (chunk, meta) => { out.push({ chunk, meta }); },
+    error: (e) => { err = e; },
+  });
+  enc.configure({ codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 128_000 });
+  const ch0 = mix.getChannelData(0);
+  const ch1 = mix.numberOfChannels > 1 ? mix.getChannelData(1) : ch0;
+  const block = 4800;
+  for (let off = 0; off < mix.length; off += block) {
+    if (err) throw err;
+    const n = Math.min(block, mix.length - off);
+    const data = new Float32Array(n * 2);
+    data.set(ch0.subarray(off, off + n), 0);
+    data.set(ch1.subarray(off, off + n), n);
+    const ad = new AudioData({
+      format: 'f32-planar',
+      sampleRate: 48000,
+      numberOfFrames: n,
+      numberOfChannels: 2,
+      timestamp: Math.round((off / 48000) * 1e6),
+      data,
+    });
+    enc.encode(ad);
+    ad.close();
+    if (enc.encodeQueueSize > 24) await sleep(6);
+  }
+  await enc.flush();
+  try { enc.close(); } catch (e) {}
+  if (err) throw err;
+  return out;
 }

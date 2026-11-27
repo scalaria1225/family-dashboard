@@ -1497,15 +1497,18 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js?v=2');
+    const mod = await import('./export.js?v=3');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
     if (!blob || !blob.size) throw new Error('영상이 비어 있어요. 다시 시도해 주세요.');
     const name = `reels-${stamp()}.${result.ext}`;
     lastExport = { blob, name };
+    const sizeMb = (blob.size / 1048576).toFixed(1);
+    const label = result.mode === 'webm' ? '이 브라우저는 MP4 대신 WebM으로 저장돼요' : 'MP4 · 1080×1920';
+    const silent = result.mode === 'webcodecs' && result.hasAudio === false ? ' · 무음' : '';
     $('exTitle').textContent = '완성됐어요! 🎉';
-    $('exNote').textContent = `${(blob.size / 1048576).toFixed(1)}MB · ${(result.mode === 'webm' ? '이 브라우저는 MP4 대신 WebM으로 저장돼요' : 'MP4 · 1080×1920')}`;
+    $('exNote').textContent = `${sizeMb}MB · ${label}${silent}`;
     $('exBar').style.width = '100%';
     $('exPct').textContent = '100%';
     $('exResult').hidden = false;
