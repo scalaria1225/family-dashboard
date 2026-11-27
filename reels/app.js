@@ -266,10 +266,17 @@ async function addFiles(files) {
 
 function fitTimesToTotal() {
   const total = totalDuration();
+  if (total <= 0) return;
   for (const s of [...state.subtitles, ...state.stickers]) {
-    if (s.start > total) { s.start = Math.max(0, total - 1); s.end = total; }
-    if (s.end > total) s.end = total;
-    if (s.end - s.start < 0.3) s.end = Math.min(total, s.start + 0.3);
+    const dur = Math.max(0.4, (s.end - s.start) || 1);
+    if (s.start > total - 0.05) { s.end = total; s.start = Math.max(0, total - dur); }
+    s.end = Math.min(s.end, total);
+    if (s.end - s.start < 0.3) {
+      s.start = Math.max(0, Math.min(s.start, total - 0.3));
+      s.end = Math.min(total, s.start + Math.max(0.3, Math.min(dur, total)));
+    }
+    s.start = Math.round(s.start * 100) / 100;
+    s.end = Math.round(s.end * 100) / 100;
   }
   state.playhead = clamp(state.playhead, 0, total);
 }
@@ -1490,7 +1497,7 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js');
+    const mod = await import('./export.js?v=2');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
