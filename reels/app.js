@@ -1249,10 +1249,20 @@ function wrapText(ctx, text, maxW) {
   for (const para of String(text || '').split('\n')) {
     if (!para) { out.push(''); continue; }
     let line = '';
-    for (const ch of para) {
-      const test = line + ch;
-      if (line && ctx.measureText(test).width > maxW) { out.push(line); line = ch; }
-      else line = test;
+    for (const word of para.split(' ')) {
+      const test = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(test).width > maxW) {
+        out.push(line);
+        line = word;
+        while (line.length > 1 && ctx.measureText(line).width > maxW) {
+          let cut = line.length - 1;
+          while (cut > 1 && ctx.measureText(line.slice(0, cut)).width > maxW) cut--;
+          out.push(line.slice(0, cut));
+          line = line.slice(cut);
+        }
+      } else {
+        line = test;
+      }
     }
     out.push(line);
   }
@@ -1497,7 +1507,7 @@ async function startExport() {
   exportUi = ui;
 
   try {
-    const mod = await import('./export.js?v=8');
+    const mod = await import('./export.js?v=9');
     const result = await mod.exportMovie(api, ui);
     if (result.cancelled) { $('exportModal').hidden = true; return; }
     const blob = result.blob;
